@@ -42,7 +42,7 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
     ];
 
     // Tentukan menu yang digunakan
-    const menuItems = userRole === 'seller' ? sellerMenuItems : userMenuItems;
+    const menuItems = userRole == 'seller' ? sellerMenuItems : userMenuItems;
 
     return (
         <div
