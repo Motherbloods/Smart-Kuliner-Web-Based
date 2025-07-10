@@ -1,15 +1,12 @@
 import { useState } from 'react';
 import {
-    UserCircle,
     FileText,
-    Store,
-    Menu,
-    Home,
-    BarChart3,
-    Settings,
-    HelpCircle,
     ChevronLeft,
     ChevronRight,
+    MonitorPlay,
+    UtensilsCrossed,
+    User,
+    LogOut,
 } from 'lucide-react';
 
 export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
@@ -21,11 +18,14 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
         onToggle?.(newState);
     };
 
+    console.log('ini open?', isOpen)
     const menuItems = [
         // { id: 'dashboard', label: 'Dashboard', icon: Home, badge: null },
-        { id: 'products', label: 'Produk', icon: Store, badge: 'hot' },
-        { id: 'konten', label: 'Konten', icon: FileText, badge: null },
-        { id: 'resep', label: 'Resep', icon: FileText, badge: null },
+        { id: 'products', label: 'Produk', icon: UtensilsCrossed },
+        { id: 'konten', label: 'Konten', icon: MonitorPlay },
+        { id: 'resep', label: 'Resep', icon: FileText },
+        { id: 'profile', label: 'Informasi Pengguna', icon: User },
+        { id: 'logout', label: 'Logout', icon: LogOut },
         // { id: 'informasi-pengguna', label: 'Pengguna', icon: UserCircle, badge: null },
         // { id: 'analytics', label: 'Analitik', icon: BarChart3, badge: '5' },
     ];

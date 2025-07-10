@@ -162,7 +162,7 @@ export function RegisterPage() {
                     <div className="space-y-6">
                         {/* Name Fields */}
                         <div className="group">
-                            <label className="block text-sm font-semibold text-gray-700 mb-3 flex items-center">
+                            <label className=" text-sm font-semibold text-gray-700 mb-3 flex items-center">
                                 <User className="h-4 w-4 mr-2 text-gray-400" />
                                 Nama Lengkap
                             </label>

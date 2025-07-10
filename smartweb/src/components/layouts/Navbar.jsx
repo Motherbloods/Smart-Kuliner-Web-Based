@@ -4,7 +4,6 @@ import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle } from
 
 export const Navbar = ({ activeMenu, isSidebarOpen }) => {
     const navigate = useNavigate();
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
@@ -157,7 +156,6 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                     {/* Enhanced Avatar Dropdown */}
                     <div className="relative">
                         <button
-                            onClick={() => setIsDropdownOpen(!isDropdownOpen)}
                             className="flex items-center space-x-3 p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all duration-200"
                         >
                             <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
@@ -167,44 +165,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                                 <div className="text-sm font-semibold text-gray-800">John Doe</div>
                                 <div className="text-xs text-gray-500">Customer</div>
                             </div>
-                            <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${isDropdownOpen ? 'rotate-180' : ''}`} />
                         </button>
-
-                        {/* Enhanced User Dropdown */}
-                        {isDropdownOpen && (
-                            <div className="absolute right-0 mt-2 w-64 bg-white border border-gray-200 rounded-2xl shadow-xl backdrop-blur-lg z-50">
-                                <div className="p-4 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50 rounded-t-2xl">
-                                    <div className="flex items-center space-x-3">
-                                        <div className="w-12 h-12 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
-                                            <User className="h-6 w-6 text-white" />
-                                        </div>
-                                        <div>
-                                            <div className="font-semibold text-gray-800">John Doe</div>
-                                            <div className="text-sm text-gray-500">john.doe@smartkuliner.com</div>
-                                        </div>
-                                    </div>
-                                </div>
-                                <div className="p-2">
-                                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                                        <User className="h-4 w-4" />
-                                        <span className="text-sm">Profil Saya</span>
-                                    </button>
-                                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                                        <Settings className="h-4 w-4" />
-                                        <span className="text-sm">Pengaturan</span>
-                                    </button>
-                                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-left text-gray-700 hover:bg-gray-50 rounded-lg transition-colors duration-200">
-                                        <MessageCircle className="h-4 w-4" />
-                                        <span className="text-sm">Bantuan</span>
-                                    </button>
-                                    <div className="border-t border-gray-100 my-2"></div>
-                                    <button className="w-full flex items-center space-x-3 px-4 py-3 text-left text-red-600 hover:bg-red-50 rounded-lg transition-colors duration-200">
-                                        <LogOut className="h-4 w-4" />
-                                        <span className="text-sm">Keluar</span>
-                                    </button>
-                                </div>
-                            </div>
-                        )}
                     </div>
                 </div>
             </div>

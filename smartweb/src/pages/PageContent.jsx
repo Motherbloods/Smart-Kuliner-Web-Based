@@ -1,5 +1,7 @@
 import KontenPage from "./Konten";
 import ProductsList from "./ProductList";
+import Profile from "./Profile";
+import RecipePage from "./Resep";
 
 export const PageContent = ({ activeMenu, isSidebarOpen }) => {
     const renderContent = () => {
@@ -11,40 +13,23 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
                 );
             case 'konten':
                 return (<KontenPage />)
-            case 'informasi-pengguna':
+            case 'resep':
                 return (
-                    <div className="space-y-6">
-                        <div className="bg-white p-6 rounded-lg shadow-md">
-                            <h3 className="text-lg font-semibold mb-4">Informasi Profil</h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
-                                    <input type="text" defaultValue="John Doe" className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                                    <input type="email" defaultValue="john.doe@example.com" className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nomor Telepon</label>
-                                    <input type="tel" defaultValue="+62 812 3456 7890" className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                </div>
-                                <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Jabatan</label>
-                                    <input type="text" defaultValue="Administrator" className="w-full p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500" />
-                                </div>
-                            </div>
-                            <div className="mt-6">
-                                <button className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                                    Simpan Perubahan
-                                </button>
-                            </div>
+                    <RecipePage />
+                )
+            case 'profile':
+                return (<Profile />)
+            case 'logout':
+                return (<div>logout</div>)
+            default:
+                return (
+                    <div className="p-6">
+                        <h1 className="text-2xl font-bold text-gray-900 mb-6">Dashboard</h1>
+                        <div className="bg-white rounded-lg shadow p-6">
+                            <p className="text-gray-600">Selamat datang di SmartKuliner!</p>
                         </div>
                     </div>
                 );
-
-            default:
-                return <div>Halaman tidak ditemukan</div>;
         }
     };
 
