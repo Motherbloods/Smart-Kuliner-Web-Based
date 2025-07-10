@@ -1,20 +1,12 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, X, Filter, Star, ShoppingCart, ArrowLeft, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
-import productsData from "../data/products.json";
-
-// Mock data produk
-const mockProducts = Object.entries(productsData.products || {}).map(
-    ([id, item]) => ({
-        id,
-        ...item,
-    })
-);
+import productService from '../services/ProductServices';
 
 const ProductSearchPage = () => {
     const navigate = useNavigate();
     const [searchParams, setSearchParams] = useSearchParams();
-
+    const [products, setProducts] = useState([]);
     // Initialize search query from URL parameter
     const [searchQuery, setSearchQuery] = useState(searchParams.get('q') || '');
     const [searchInput, setSearchInput] = useState(searchParams.get('q') || '');
@@ -30,6 +22,9 @@ const ProductSearchPage = () => {
         price: true,
         rating: true
     });
+    useEffect(() => {
+        productService.getAllProducts().then(setProducts).catch(console.error);
+    }, []);
 
     // Update search query when URL parameter changes
     useEffect(() => {
@@ -48,11 +43,11 @@ const ProductSearchPage = () => {
     }, [searchQuery, setSearchParams]);
 
     // Get unique categories and locations
-    const categories = [...new Set(mockProducts.map(p => p.category))];
+    const categories = [...new Set(products.map(p => p.category))];
 
     // Filter and sort products
     const filteredProducts = useMemo(() => {
-        let filtered = mockProducts.filter(product => {
+        let filtered = products.filter(product => {
             const matchesSearch =
                 product.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
                 product.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -106,7 +101,6 @@ const ProductSearchPage = () => {
 
     const clearAllFilters = () => {
         setSelectedCategory('');
-        setSelectedLocation('');
         setPriceRange([0, 100000]);
         setSelectedRating(0);
         setSortBy('rating');
@@ -134,7 +128,7 @@ const ProductSearchPage = () => {
     };
 
     const handleBackClick = () => {
-        navigate('/dashboard');
+        navigate('/');
     };
 
     return (
@@ -199,7 +193,7 @@ const ProductSearchPage = () => {
                 <div className="flex gap-6">
                     {/* Sidebar Filters */}
                     {showFilters && (
-                        <div className="w-80 flex-shrink-0">
+                        <div className="w-80 flex-shrink-0 sticky top-24 self-start h-fit">
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
                                 <div className="p-6 border-b border-gray-200">
                                     <div className="flex items-center justify-between">
@@ -352,62 +346,62 @@ const ProductSearchPage = () => {
                         </div>
 
                         {/* Product Grid */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                        <div className={`grid grid-cols-1 md:grid-cols-2 ${showFilters ? 'lg:grid-cols-3' : 'lg:grid-cols-4'} gap-6`}>
                             {filteredProducts.map(product => (
                                 <div
                                     key={product.id}
-                                    className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                                    onClick={() => handleProductClick(product.id)}
+                                    className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 h-full flex flex-col"
                                 >
-                                    <div className="aspect-w-16 aspect-h-9">
+                                    {/* Product Image */}
+                                    <div className="relative overflow-hidden">
                                         <img
-                                            src={product.imageUrls[0]}
+                                            src={product.imageUrls?.[0]}
                                             alt={product.name}
-                                            className="w-full h-48 object-cover"
+                                            className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
                                         />
-                                    </div>
-                                    <div className="p-4">
-                                        <div className="flex items-start justify-between mb-2">
-                                            <h3 className="text-lg font-semibold text-gray-800 line-clamp-1">
-                                                {product.name}
-                                            </h3>
-                                            <div className="flex items-center space-x-1">
-                                                <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                                <span className="text-sm font-medium text-gray-600">
-                                                    {product.rating}
-                                                </span>
-                                            </div>
+                                        <div className="absolute top-4 left-4">
+                                            <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-lg">
+                                                {product.category}
+                                            </span>
                                         </div>
-                                        <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+
+                                    </div>
+
+                                    {/* Product Info */}
+                                    <div className="p-6 flex flex-col flex-grow">
+                                        <div className="flex items-center mb-2">
+                                            <Star className="h-4 w-4 text-yellow-400 fill-current" />
+                                            <span className="ml-1 text-sm font-medium text-gray-700">
+                                                {product.rating || '4.5'}
+                                            </span>
+                                            <span className="text-gray-400 text-sm ml-2">
+                                                (125 ulasan)
+                                            </span>
+                                        </div>
+
+                                        <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">
+                                            {product.name}
+                                        </h3>
+
+                                        <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                                             {product.description}
                                         </p>
-                                        <div className="flex items-center justify-between mb-3">
-                                            <div className="text-xl font-bold text-green-600">
-                                                {formatPrice(product.price)}
-                                            </div>
-                                            <div className="text-sm text-gray-500">
-                                                125 ulasan
-                                            </div>
-                                        </div>
-                                        <div className="flex items-center justify-between">
-                                            <div className="flex items-center space-x-2">
-                                                <span className="text-xs bg-blue-100 text-blue-800 px-2 py-1 rounded-full">
-                                                    {product.category}
+
+                                        <div className="flex items-center justify-between mb-4 mt-auto">
+                                            <div className="flex flex-col">
+                                                <span className="text-2xl font-bold text-gray-800">
+                                                    Rp {product.price.toLocaleString("id-ID")}
                                                 </span>
-                                                <span className="text-xs bg-gray-100 text-gray-600 px-2 py-1 rounded-full">
-                                                    {product.location}
+                                                <span className="text-sm text-gray-500 line-through">
+                                                    Rp {(product.price * 1.2).toLocaleString("id-ID")}
                                                 </span>
                                             </div>
-                                            <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    alert(`Menambahkan ${product.name} ke keranjang`);
-                                                }}
-                                                className="p-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                                            >
-                                                <ShoppingCart className="h-4 w-4" />
-                                            </button>
                                         </div>
+
+                                        <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group">
+                                            <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
+                                            <span>Beli Sekarang</span>
+                                        </button>
                                     </div>
                                 </div>
                             ))}

@@ -17,8 +17,6 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
         setIsOpen(newState);
         onToggle?.(newState);
     };
-
-    console.log('ini open?', isOpen)
     const menuItems = [
         // { id: 'dashboard', label: 'Dashboard', icon: Home, badge: null },
         { id: 'products', label: 'Produk', icon: UtensilsCrossed },

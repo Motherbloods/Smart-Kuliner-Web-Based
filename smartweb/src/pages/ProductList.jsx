@@ -1,31 +1,34 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { Star, Heart, ShoppingCart, ArrowUp } from "lucide-react";
-import productsData from "../data/products.json";
+import productService from "../services/ProductServices";
 
 function ProductsList({ isSidebarOpen }) {
-    const allProducts = Object.entries(productsData.products || {}).map(
-        ([id, item]) => ({
-            id,
-            ...item,
-        })
-    );
-
+    const [products, setProducts] = useState([]);
     const [visibleCount, setVisibleCount] = useState(
         isSidebarOpen ? 4 : 6
     );
     const [sortBy, setSortBy] = useState("rating");
-    // Gunakan useMemo agar hanya dihitung ulang saat sort berubah
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const fetched = await productService.getAllProducts();
+                setProducts(fetched);
+            } catch (error) {
+                console.error(error.message);
+            }
+        };
+        fetchProducts();
+    }, []);
+
     const sortedProducts = useMemo(() => {
-        const sorted = [...allProducts];
+        const sorted = [...products];
         if (sortBy === "rating") {
             sorted.sort((a, b) => b.rating - a.rating);
         } else if (sortBy === "newest") {
-            sorted.sort(
-                (a, b) => new Date(b.createdAt) - new Date(a.createdAt)
-            );
+            sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
         }
         return sorted;
-    }, [allProducts, sortBy]);
+    }, [products, sortBy]);
 
     // Hitung berapa item per klik berdasarkan kondisi sidebar saat ini
     const perClickIncrement = isSidebarOpen ? 4 : 6;
