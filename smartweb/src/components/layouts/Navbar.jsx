@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle } from 'lucide-react';
 
@@ -14,6 +14,15 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         { id: 3, message: 'Profil berhasil diperbarui', time: '3 jam lalu', type: 'profile', unread: false },
         { id: 4, message: 'Produk baru ditambahkan', time: '5 jam lalu', type: 'product', unread: false },
     ];
+
+    const [userInfo, setUserInfo] = useState(null);
+
+    useEffect(() => {
+        const userData = localStorage.getItem('user_info');
+        if (userData) {
+            setUserInfo(JSON.parse(userData));
+        }
+    }, []);
 
     const unreadCount = notifications.filter(n => n.unread).length;
 
@@ -50,6 +59,11 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         if (searchQuery.trim()) {
             navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
         }
+    };
+
+    const capitalize = (str) => {
+        if (!str) return '';
+        return str.charAt(0).toUpperCase() + str.slice(1);
     };
 
     return (
@@ -162,8 +176,14 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                                 <User className="h-4 w-4 text-white" />
                             </div>
                             <div className="text-left">
-                                <div className="text-sm font-semibold text-gray-800">John Doe</div>
-                                <div className="text-xs text-gray-500">Customer</div>
+                                <div className="text-sm font-semibold text-gray-800">
+                                    {capitalize(userInfo?.name || userInfo?.nameToko || 'Pengguna')}
+
+                                </div>
+                                <div className="text-xs text-gray-500">
+                                    {userInfo?.nameToko ? 'Seller' : 'Customer'}
+                                </div>
+
                             </div>
                         </button>
                     </div>

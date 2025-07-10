@@ -60,12 +60,19 @@ export const authService = {
 
             // Update lastLoginAt
             const userRef = doc(db, 'users', user.uid);
+            const userSnapshot = await getDoc(userRef);
+            const userDataSave = userSnapshot.data();
             await setDoc(userRef, {
                 lastLoginAt: new Date().toISOString()
             }, { merge: true });
 
             const idToken = await user.getIdToken();
             localStorage.setItem('firebase_id_token', idToken);
+            const userInfo = {
+                uid: user.uid,
+                ...(userDataSave.namaToko ? { nameToko: userDataSave.namaToko } : { name: userDataSave.name }),
+            };
+            localStorage.setItem('user_info', JSON.stringify(userInfo));
 
 
             return { user, idToken };
