@@ -1,3 +1,4 @@
+import KontenPage from "./Konten";
 import ProductsList from "./ProductList";
 
 export const PageContent = ({ activeMenu, isSidebarOpen }) => {
@@ -9,35 +10,7 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
 
                 );
             case 'konten':
-                return (
-                    <div className="space-y-6">
-                        <div className="flex justify-between items-center">
-                            <h3 className="text-lg font-semibold">Manajemen Konten</h3>
-                            <button className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
-                                Tambah Konten Baru
-                            </button>
-                        </div>
-                        <div className="bg-white rounded-lg shadow-md">
-                            <div className="p-6">
-                                <div className="space-y-4">
-                                    {[1, 2, 3, 4, 5].map((item) => (
-                                        <div key={item} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg">
-                                            <div>
-                                                <h4 className="font-semibold">Judul Konten {item}</h4>
-                                                <p className="text-sm text-gray-600">Diterbitkan 2 hari yang lalu</p>
-                                            </div>
-                                            <div className="flex space-x-2">
-                                                <button className="text-blue-600 hover:text-blue-800">Edit</button>
-                                                <button className="text-red-600 hover:text-red-800">Hapus</button>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                );
-
+                return (<KontenPage />)
             case 'informasi-pengguna':
                 return (
                     <div className="space-y-6">
