@@ -17,14 +17,11 @@ export default function LoginPage() {
         setError('');
 
         try {
-            const response = await authService.login({
-                email,
-                password,
-
-            });
+            console.log(typeof email)
+            const response = await authService.login(email, password,);
             console.log('Login successful:', response);
             // Simulate redirect
-            alert('Login successful! Redirecting to dashboard...');
+            navigate('/');
         } catch (error) {
             setError(error.message || 'Login failed');
         } finally {
@@ -161,7 +158,7 @@ export default function LoginPage() {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes shake {
                     0%, 100% { transform: translateX(0); }
                     25% { transform: translateX(-5px); }
