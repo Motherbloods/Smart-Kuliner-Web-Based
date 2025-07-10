@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle } from 'lucide-react';
+import { useAuth } from '../../hooks/useAuth';
 
 export const Navbar = ({ activeMenu, isSidebarOpen }) => {
     const navigate = useNavigate();
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
+    const { userData } = useAuth();
 
     const notifications = [
         { id: 1, message: 'Pesanan baru dari pelanggan', time: '2 menit lalu', type: 'order', unread: true },
@@ -14,15 +16,6 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         { id: 3, message: 'Profil berhasil diperbarui', time: '3 jam lalu', type: 'profile', unread: false },
         { id: 4, message: 'Produk baru ditambahkan', time: '5 jam lalu', type: 'product', unread: false },
     ];
-
-    const [userInfo, setUserInfo] = useState(null);
-
-    useEffect(() => {
-        const userData = localStorage.getItem('user_info');
-        if (userData) {
-            setUserInfo(JSON.parse(userData));
-        }
-    }, []);
 
     const unreadCount = notifications.filter(n => n.unread).length;
 
@@ -65,6 +58,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         if (!str) return '';
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
+
 
     return (
         <div className={`fixed top-0 ${isSidebarOpen ? 'left-60' : 'left-16'} right-0 bg-white/80 backdrop-blur-md shadow-lg z-20 h-16 border-b border-gray-200/50 transition-all duration-300`}>
@@ -176,14 +170,9 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                                 <User className="h-4 w-4 text-white" />
                             </div>
                             <div className="text-left">
-                                <div className="text-sm font-semibold text-gray-800">
-                                    {capitalize(userInfo?.name || userInfo?.nameToko || 'Pengguna')}
-
+                                <div className="text-sm font-semibold text-gray-800">    {capitalize(userData?.name || userData?.nameToko || 'Pengguna')}
                                 </div>
-                                <div className="text-xs text-gray-500">
-                                    {userInfo?.nameToko ? 'Seller' : 'Customer'}
-                                </div>
-
+                                <div className="text-xs text-gray-500"> {userData?.nameToko ? 'Seller' : 'Customer'}</div>
                             </div>
                         </button>
                     </div>

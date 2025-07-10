@@ -44,7 +44,6 @@ export const authService = {
                     where('phoneNumber', '==', cleanPhone)
                 );
 
-                console.log(q)
                 const snapshot = await getDocs(q);
                 if (snapshot.empty) {
                     throw new Error('Nomor telepon tidak ditemukan');
@@ -60,22 +59,11 @@ export const authService = {
 
             // Update lastLoginAt
             const userRef = doc(db, 'users', user.uid);
-            const userSnapshot = await getDoc(userRef);
-            const userDataSave = userSnapshot.data();
             await setDoc(userRef, {
                 lastLoginAt: new Date().toISOString()
             }, { merge: true });
 
-            const idToken = await user.getIdToken();
-            localStorage.setItem('firebase_id_token', idToken);
-            const userInfo = {
-                uid: user.uid,
-                ...(userDataSave.namaToko ? { nameToko: userDataSave.namaToko } : { name: userDataSave.name }),
-            };
-            localStorage.setItem('user_info', JSON.stringify(userInfo));
-
-
-            return { user, idToken };
+            return { user };
         } catch (error) {
             console.error('[ERROR] Login gagal:', error);
             throw new Error(error.message || 'Login gagal');
@@ -116,30 +104,27 @@ export const authService = {
                 email: email,
                 name: userData.name || '',
                 phoneNumber: userData.phoneNumber || '',
-                dateOfBirth: userData.dateOfBirth || '',
-                gender: userData.gender || '',
-                address: userData.address || '',
-                city: userData.city || '',
-                province: userData.province || '',
-                postalCode: userData.postalCode || '',
+                dateOfBirth: userData.dateOfBirth || null,
+                gender: userData.gender || null,
+                address: userData.address || null,
+                city: userData.city || null,
+                province: userData.province || null,
+                postalCode: userData.postalCode || null,
                 favoriteCategories: userData.favoriteCategories || [],
                 emailVerified: false,
                 phoneVerified: false,
-                seller: false,
+                seller: userData.seller || false,
                 profileImageUrl: null,
                 tokenFCM: null,
                 createdAt: new Date().toISOString(),
                 lastLoginAt: new Date().toISOString(),
-                namaToko: null // untuk seller
+                namaToko: userData.namaToko || null
             };
 
             // Simpan data user ke Firestore
             const userRef = doc(db, 'users', user.uid);
             await setDoc(userRef, userDataToSave);
-            const idToken = await user.getIdToken();
 
-            // Simpan token ke localStorage
-            localStorage.setItem('firebase_id_token', idToken);
             console.log('[SUCCESS] User berhasil didaftarkan:', user.uid);
             return user;
         } catch (error) {
@@ -151,9 +136,9 @@ export const authService = {
     logout: async () => {
         try {
             await signOut(auth);
-            localStorage.removeItem('firebase_id_token');
         } catch (error) {
             console.error('Logout gagal:', error);
+            throw error;
         }
     },
 
@@ -166,7 +151,6 @@ export const authService = {
         });
     },
 
-    // Fungsi untuk mendapatkan data user dari Firestore
     getUserData: async (uid) => {
         try {
             const userRef = doc(db, 'users', uid);
@@ -183,7 +167,6 @@ export const authService = {
         }
     },
 
-    // Fungsi untuk update data user
     updateUserData: async (uid, updateData) => {
         try {
             const userRef = doc(db, 'users', uid);
@@ -196,7 +179,6 @@ export const authService = {
         }
     },
 
-    // Fungsi untuk verifikasi email
     verifyEmail: async (uid) => {
         try {
             const userRef = doc(db, 'users', uid);
@@ -211,7 +193,6 @@ export const authService = {
         }
     },
 
-    // Fungsi untuk verifikasi nomor telepon
     verifyPhone: async (uid) => {
         try {
             const userRef = doc(db, 'users', uid);

@@ -9,6 +9,7 @@ import { Sidebar } from "./components/layouts/Sidebar";
 import ProductSearchPage from "./pages/ProductSearch";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PublicRoute } from "./components/PublicRoute";
+import { AuthProvider } from "./context/AuthProvider";
 
 const DashboardLayout = () => {
   const [activeMenu, setActiveMenu] = useState("products");
@@ -39,51 +40,54 @@ const DashboardLayout = () => {
 
 export function App() {
   return (
-    <Router>
-      <Routes>
-        {/* Public Routes */}
-        <Route
-          path="/login"
-          element={
-            <PublicRoute>
-              <LoginPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register"
-          element={
-            <PublicRoute>
-              <RegisterPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/register-seller"
-          element={
-            <PublicRoute>
-              <RegisterSellerPage />
-            </PublicRoute>
-          }
-        />
-        <Route
-          path="/product-search"
-          element={
-            <ProtectedRoute>
-              <ProductSearchPage />
-            </ProtectedRoute>
-          }
-        />
+    <AuthProvider>
+      <Router>
+        <Routes>
+          {/* Public Routes */}
+          <Route
+            path="/login"
+            element={
+              <PublicRoute>
+                <LoginPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register"
+            element={
+              <PublicRoute>
+                <RegisterPage />
+              </PublicRoute>
+            }
+          />
+          <Route
+            path="/register-seller"
+            element={
+              <PublicRoute>
+                <RegisterSellerPage />
+              </PublicRoute>
+            }
+          />
 
-        <Route
-          path="/"
-          element={
-            <ProtectedRoute>
-              <DashboardLayout />
-            </ProtectedRoute>
-          }
-        />
-      </Routes>
-    </Router>
+          {/* Protected Routes */}
+          <Route
+            path="/product-search"
+            element={
+              <ProtectedRoute>
+                <ProductSearchPage />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
 }

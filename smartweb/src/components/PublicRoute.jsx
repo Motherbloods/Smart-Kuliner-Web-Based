@@ -1,8 +1,14 @@
-// components/PublicRoute.js
-import React from "react";
 import { Navigate } from "react-router-dom";
+import { useAuth } from "../hooks/useAuth";
 
 export const PublicRoute = ({ children }) => {
-    const token = localStorage.getItem("firebase_id_token"); // atau sessionStorage
-    return token ? <Navigate to="/" replace /> : children;
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) return <div>Loading...</div>;
+
+    if (isAuthenticated) {
+        return <Navigate to="/" replace />;
+    }
+
+    return children;
 };
