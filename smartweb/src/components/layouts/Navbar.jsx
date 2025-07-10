@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle } from 'lucide-react';
 
 export const Navbar = ({ activeMenu, isSidebarOpen }) => {
+    const navigate = useNavigate();
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isNotificationOpen, setIsNotificationOpen] = useState(false);
     const [searchQuery, setSearchQuery] = useState('');
@@ -35,6 +37,22 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         }
     };
 
+    // Function to handle search
+    const handleSearch = (e) => {
+        e.preventDefault();
+        if (searchQuery.trim()) {
+            // Navigate to product search page with query parameter
+            navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
+    // Function to handle search icon click
+    const handleSearchIconClick = () => {
+        if (searchQuery.trim()) {
+            navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+        }
+    };
+
     return (
         <div className={`fixed top-0 ${isSidebarOpen ? 'left-60' : 'left-16'} right-0 bg-white/80 backdrop-blur-md shadow-lg z-20 h-16 border-b border-gray-200/50 transition-all duration-300`}>
             <div className="flex items-center justify-between h-full px-6">
@@ -52,9 +70,15 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                 {/* Enhanced Search Bar & Icons */}
                 <div className="flex items-center space-x-4">
                     {/* Enhanced Search Bar */}
-                    <div className="relative">
+                    <form onSubmit={handleSearch} className="relative">
                         <div className={`relative transition-all duration-200 ${isSearchFocused ? 'scale-105' : ''}`}>
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
+                            <button
+                                type="button"
+                                onClick={handleSearchIconClick}
+                                className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400 hover:text-blue-600 transition-colors cursor-pointer"
+                            >
+                                <Search className="h-4 w-4" />
+                            </button>
                             <input
                                 type="text"
                                 placeholder="Cari produk, pesanan, atau konten..."
@@ -62,10 +86,15 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                                 onChange={(e) => setSearchQuery(e.target.value)}
                                 onFocus={() => setIsSearchFocused(true)}
                                 onBlur={() => setIsSearchFocused(false)}
+                                onKeyPress={(e) => {
+                                    if (e.key === 'Enter') {
+                                        handleSearch(e);
+                                    }
+                                }}
                                 className="pl-10 pr-4 py-2.5 w-80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200"
                             />
                         </div>
-                    </div>
+                    </form>
 
                     {/* Enhanced Notification Icon */}
                     <div className="relative">
