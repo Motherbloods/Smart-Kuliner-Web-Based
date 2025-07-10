@@ -1,6 +1,7 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { Star, Heart, ShoppingCart, ArrowUp } from "lucide-react";
+import { ArrowUp } from "lucide-react";
 import productService from "../services/ProductServices";
+import ProductGrid from "../components/ProductGrid";
 
 function ProductsList({ isSidebarOpen }) {
     const [products, setProducts] = useState([]);
@@ -8,6 +9,7 @@ function ProductsList({ isSidebarOpen }) {
         isSidebarOpen ? 4 : 6
     );
     const [sortBy, setSortBy] = useState("rating");
+
     useEffect(() => {
         const fetchProducts = async () => {
             try {
@@ -22,13 +24,21 @@ function ProductsList({ isSidebarOpen }) {
 
     const sortedProducts = useMemo(() => {
         const sorted = [...products];
+
         if (sortBy === "rating") {
-            sorted.sort((a, b) => b.rating - a.rating);
+            sorted.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         } else if (sortBy === "newest") {
-            sorted.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+            sorted.sort((a, b) => {
+                const dateA = new Date((a.createdAt || "").split(".")[0]);
+                const dateB = new Date((b.createdAt || "").split(".")[0]);
+                console.log(dateA)
+                return dateB - dateA;
+            });
         }
+
         return sorted;
     }, [products, sortBy]);
+
 
     // Hitung berapa item per klik berdasarkan kondisi sidebar saat ini
     const perClickIncrement = isSidebarOpen ? 4 : 6;
@@ -50,8 +60,13 @@ function ProductsList({ isSidebarOpen }) {
         setVisibleCount((prev) => prev + perClickIncrement);
     };
 
-    const visibleProducts = sortedProducts.slice(0, visibleCount);
+    const handleProductClick = (productId) => {
+        // Navigate to product detail page
+        console.log(`Navigate to product detail: ${productId}`);
+        // You can add navigation logic here
+    };
 
+    const visibleProducts = sortedProducts.slice(0, visibleCount);
     return (
         <div className="space-y-8 p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
             {/* Header Section */}
@@ -79,68 +94,13 @@ function ProductsList({ isSidebarOpen }) {
                 </div>
             </div>
 
-            {/* Enhanced Grid Produk */}
-            <div className="grid grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))] gap-6">
-                {visibleProducts.map((product) => (
-                    <div
-                        key={product.id}
-                        className="group relative bg-white rounded-2xl shadow-sm hover:shadow-xl border border-gray-100 overflow-hidden transition-all duration-300 hover:-translate-y-1 h-full flex flex-col"
-                    >
-                        {/* Product Image */}
-                        <div className="relative overflow-hidden">
-                            <img
-                                src={product.imageUrls?.[0]}
-                                alt={product.name}
-                                className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300"
-                            />
-                            <div className="absolute top-4 left-4">
-                                <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-600 text-white shadow-lg">
-                                    {product.category}
-                                </span>
-                            </div>
-
-                        </div>
-
-                        {/* Product Info */}
-                        <div className="p-6 flex flex-col flex-grow">
-                            <div className="flex items-center mb-2">
-                                <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                <span className="ml-1 text-sm font-medium text-gray-700">
-                                    {product.rating || '4.5'}
-                                </span>
-                                <span className="text-gray-400 text-sm ml-2">
-                                    (125 ulasan)
-                                </span>
-                            </div>
-
-                            <h3 className="text-lg font-bold text-gray-800 mb-2 line-clamp-2 leading-tight">
-                                {product.name}
-                            </h3>
-
-                            <p className="text-sm text-gray-600 mb-4 line-clamp-2">
-                                {product.description}
-                            </p>
-
-                            <div className="flex items-center justify-between mb-4 mt-auto">
-                                <div className="flex flex-col">
-                                    <span className="text-2xl font-bold text-gray-800">
-                                        Rp {product.price.toLocaleString("id-ID")}
-                                    </span>
-                                    <span className="text-sm text-gray-500 line-through">
-                                        Rp {(product.price * 1.2).toLocaleString("id-ID")}
-                                    </span>
-                                </div>
-                            </div>
-
-                            <button className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group">
-                                <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
-                                <span>Beli Sekarang</span>
-                            </button>
-                        </div>
-                    </div>
-
-                ))}
-            </div>
+            {/* Product Grid */}
+            <ProductGrid
+                products={visibleProducts}
+                onProductClick={handleProductClick}
+                gridResponsive="grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))]"
+                showBuyButton={true}
+            />
 
             {/* Enhanced Load More Button */}
             {visibleCount < sortedProducts.length && (
