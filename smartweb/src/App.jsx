@@ -7,6 +7,8 @@ import { Navbar } from "./components/layouts/Navbar";
 import { PageContent } from "./pages/PageContent";
 import { Sidebar } from "./components/layouts/Sidebar";
 import ProductSearchPage from "./pages/ProductSearch";
+import { ProtectedRoute } from "./components/ProtectedRoute";
+import { PublicRoute } from "./components/PublicRoute";
 
 const DashboardLayout = () => {
   const [activeMenu, setActiveMenu] = useState("products");
@@ -24,7 +26,10 @@ const DashboardLayout = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Sidebar activeMenu={activeMenu} setActiveMenu={setActiveMenu} onToggle={setIsSidebarOpen}
+      <Sidebar
+        activeMenu={activeMenu}
+        setActiveMenu={setActiveMenu}
+        onToggle={setIsSidebarOpen}
       />
       <Navbar activeMenu={activeMenu} isSidebarOpen={isSidebarOpen} />
       <PageContent activeMenu={activeMenu} isSidebarOpen={isSidebarOpen} />
@@ -37,13 +42,47 @@ export function App() {
     <Router>
       <Routes>
         {/* Public Routes */}
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/register" element={<RegisterPage />} />
-        <Route path="/register-seller" element={<RegisterSellerPage />} />
-        <Route path="/product-search" element={<ProductSearchPage />} />
+        <Route
+          path="/login"
+          element={
+            <PublicRoute>
+              <LoginPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register"
+          element={
+            <PublicRoute>
+              <RegisterPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/register-seller"
+          element={
+            <PublicRoute>
+              <RegisterSellerPage />
+            </PublicRoute>
+          }
+        />
+        <Route
+          path="/product-search"
+          element={
+            <ProtectedRoute>
+              <ProductSearchPage />
+            </ProtectedRoute>
+          }
+        />
 
-        {/* Protected Route - Dashboard */}
-        <Route path="/dashboard" element={<DashboardLayout />} />
+        <Route
+          path="/"
+          element={
+            <ProtectedRoute>
+              <DashboardLayout />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
