@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
     Clock,
     Users,
@@ -13,142 +13,196 @@ import {
     Filter,
     Search,
     Grid,
-    List
+    List,
+    Loader2
 } from 'lucide-react';
 
-// Sample data berdasarkan struktur JSON yang diberikan
-const sampleRecipes = {
-    "UhHjJ0VOrrmCVFeksJ5R": {
-        "rating": 5,
-        "description": "Resep cemilan lezat yang mudah dibuat dengan bahan-bahan sederhana. Cocok untuk dinikmati bersama keluarga di waktu santai.",
-        "title": "Cemilan Spesial Rumah",
-        "isActive": true,
-        "steps": [
-            {
-                "instruction": "Siapkan semua bahan yang diperlukan dan cuci bersih",
-                "stepNumber": 1
-            },
-            {
-                "instruction": "Campurkan bahan kering dalam mangkuk besar",
-                "stepNumber": 2
-            },
-            {
-                "instruction": "Tambahkan bahan basah sedikit demi sedikit sambil diaduk",
-                "stepNumber": 3
-            },
-            {
-                "instruction": "Bentuk adonan sesuai selera dan panggang hingga matang",
-                "stepNumber": 4
-            }
-        ],
-        "userId": "SrsoUropn8hQH7ynRzpPJGOUVFz2",
-        "difficulty": "Sedang",
-        "duration": 45,
-        "createdAt": "2025-06-19T12:09:18.751967",
-        "servings": 4,
-        "reviewCount": 12,
-        "imageUrl": "https://images.unsplash.com/photo-1551218808-94e220e084d2?w=400&h=300&fit=crop",
-        "ingredients": [
-            "2 cup tepung terigu",
-            "1 cup gula pasir",
-            "3 butir telur",
-            "1/2 cup mentega",
-            "1 tsp baking powder",
-            "1/2 tsp garam",
-            "1 cup susu cair"
-        ],
-        "viewCount": 1250,
-        "category": "Cemilan",
-        "updatedAt": "2025-06-19T12:09:18.752059",
-        "favoriteCount": 89
+// Mock Firebase services untuk demonstrasi
+const mockFirebaseServices = {
+    getAllRecipes: async () => {
+        // Simulasi delay loading
+        await new Promise(resolve => setTimeout(resolve, 1000));
+
+        return {
+            success: true,
+            data: [
+                {
+                    id: '1',
+                    title: 'Nasi Goreng Spesial',
+                    description: 'Nasi goreng dengan bumbu rahasia dan topping lengkap yang menggugah selera',
+                    category: 'Makanan Utama',
+                    difficulty: 'Sedang',
+                    duration: 30,
+                    servings: 4,
+                    rating: 4.5,
+                    viewCount: 1250,
+                    favoriteCount: 89,
+                    imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    createdAt: '2024-01-15T10:30:00Z',
+                    isActive: true,
+                    ingredients: [
+                        '3 piring nasi putih',
+                        '2 butir telur',
+                        '100g ayam fillet, potong dadu',
+                        '3 siung bawang putih, cincang',
+                        '2 siung bawang merah, iris tipis',
+                        '2 sdm kecap manis',
+                        '1 sdm kecap asin',
+                        '1 sdt garam',
+                        '1/2 sdt merica bubuk',
+                        '2 sdm minyak goreng'
+                    ],
+                    steps: [
+                        {
+                            stepNumber: 1,
+                            instruction: 'Panaskan minyak dalam wajan dengan api sedang. Tumis bawang putih dan bawang merah hingga harum dan kecokelatan.'
+                        },
+                        {
+                            stepNumber: 2,
+                            instruction: 'Masukkan ayam fillet yang sudah dipotong dadu. Masak hingga ayam berubah warna dan matang sempurna.'
+                        },
+                        {
+                            stepNumber: 3,
+                            instruction: 'Kocok telur dalam mangkuk terpisah. Buat scrambled egg di sisi wajan, lalu campur dengan tumisan ayam.'
+                        },
+                        {
+                            stepNumber: 4,
+                            instruction: 'Masukkan nasi putih yang sudah dingin. Aduk rata dengan spatula hingga tercampur sempurna dengan bumbu.'
+                        },
+                        {
+                            stepNumber: 5,
+                            instruction: 'Tambahkan kecap manis, kecap asin, garam, dan merica. Aduk rata dan masak selama 3-5 menit.'
+                        },
+                        {
+                            stepNumber: 6,
+                            instruction: 'Koreksi rasa sesuai selera. Angkat dan sajikan selagi hangat dengan pelengkap seperti kerupuk dan acar.'
+                        }
+                    ]
+                },
+                {
+                    id: '2',
+                    title: 'Es Teh Manis Segar',
+                    description: 'Minuman segar yang sempurna untuk cuaca panas, dengan rasa teh yang pas dan manis yang tepat',
+                    category: 'Minuman',
+                    difficulty: 'Mudah',
+                    duration: 10,
+                    servings: 2,
+                    rating: 4.2,
+                    viewCount: 856,
+                    favoriteCount: 45,
+                    imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    createdAt: '2024-01-10T14:20:00Z',
+                    isActive: true,
+                    ingredients: [
+                        '2 kantong teh celup',
+                        '400ml air panas',
+                        '3 sdm gula pasir',
+                        'Es batu secukupnya',
+                        'Daun mint untuk garnish (opsional)'
+                    ],
+                    steps: [
+                        {
+                            stepNumber: 1,
+                            instruction: 'Seduh teh celup dengan air panas selama 3-5 menit hingga warna teh keluar sempurna.'
+                        },
+                        {
+                            stepNumber: 2,
+                            instruction: 'Tambahkan gula pasir ke dalam teh panas, aduk hingga gula larut sempurna.'
+                        },
+                        {
+                            stepNumber: 3,
+                            instruction: 'Biarkan teh dingin hingga mencapai suhu ruangan, atau masukkan ke kulkas sebentar.'
+                        },
+                        {
+                            stepNumber: 4,
+                            instruction: 'Siapkan gelas saji, masukkan es batu secukupnya ke dalam gelas.'
+                        },
+                        {
+                            stepNumber: 5,
+                            instruction: 'Tuang teh manis ke dalam gelas berisi es batu. Tambahkan daun mint sebagai garnish jika diinginkan.'
+                        }
+                    ]
+                },
+                {
+                    id: '3',
+                    title: 'Kue Brownies Coklat',
+                    description: 'Brownies coklat yang lembut dan legit dengan tekstur yang sempurna untuk dessert',
+                    category: 'Cemilan',
+                    difficulty: 'Sulit',
+                    duration: 60,
+                    servings: 8,
+                    rating: 4.8,
+                    viewCount: 2150,
+                    favoriteCount: 156,
+                    imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
+                    createdAt: '2024-01-05T09:15:00Z',
+                    isActive: true,
+                    ingredients: [
+                        '200g dark chocolate, cincang',
+                        '100g butter',
+                        '150g gula pasir',
+                        '3 butir telur',
+                        '100g tepung terigu',
+                        '30g coklat bubuk',
+                        '1/2 sdt vanilla extract',
+                        '1/4 sdt garam',
+                        '100g kacang walnut, cincang (opsional)'
+                    ],
+                    steps: [
+                        {
+                            stepNumber: 1,
+                            instruction: 'Panaskan oven hingga 180°C. Olesi loyang 20x20 cm dengan butter dan taburi tepung.'
+                        },
+                        {
+                            stepNumber: 2,
+                            instruction: 'Lelehkan dark chocolate dan butter dengan double boiler hingga meleleh sempurna, aduk rata.'
+                        },
+                        {
+                            stepNumber: 3,
+                            instruction: 'Dalam mangkuk terpisah, kocok telur dan gula hingga mengembang dan berwarna pucat.'
+                        },
+                        {
+                            stepNumber: 4,
+                            instruction: 'Masukkan campuran coklat leleh ke dalam kocokan telur, aduk rata dengan spatula.'
+                        },
+                        {
+                            stepNumber: 5,
+                            instruction: 'Ayak tepung terigu dan coklat bubuk, masukkan ke dalam adonan bersama garam dan vanilla extract.'
+                        },
+                        {
+                            stepNumber: 6,
+                            instruction: 'Aduk adonan hingga rata, jangan overmix. Tambahkan kacang walnut jika digunakan.'
+                        },
+                        {
+                            stepNumber: 7,
+                            instruction: 'Tuang adonan ke loyang, ratakan permukaan. Panggang selama 25-30 menit hingga permukaan set.'
+                        },
+                        {
+                            stepNumber: 8,
+                            instruction: 'Dinginkan brownies sepenuhnya sebelum dipotong. Potong sesuai selera dan sajikan.'
+                        }
+                    ]
+                }
+            ]
+        };
     },
-    "ABC123XYZ": {
-        "rating": 4.5,
-        "description": "Hidangan utama yang kaya rasa dan bergizi tinggi, sempurna untuk makan siang bersama keluarga.",
-        "title": "Nasi Goreng Spesial",
-        "isActive": true,
-        "steps": [
-            {
-                "instruction": "Panaskan minyak dalam wajan besar",
-                "stepNumber": 1
-            },
-            {
-                "instruction": "Tumis bawang putih dan bawang merah hingga harum",
-                "stepNumber": 2
-            },
-            {
-                "instruction": "Masukkan nasi dan bumbu, aduk rata",
-                "stepNumber": 3
-            },
-            {
-                "instruction": "Tambahkan telur dan sayuran, masak hingga matang",
-                "stepNumber": 4
-            }
-        ],
-        "userId": "ABC123",
-        "difficulty": "Mudah",
-        "duration": 30,
-        "createdAt": "2025-06-18T10:30:00.000000",
-        "servings": 2,
-        "reviewCount": 25,
-        "imageUrl": "https://images.unsplash.com/photo-1512058564366-18510be2db19?w=400&h=300&fit=crop",
-        "ingredients": [
-            "2 porsi nasi putih",
-            "2 butir telur",
-            "3 siung bawang putih",
-            "2 butir bawang merah",
-            "2 sdm kecap manis",
-            "1 sdm minyak goreng",
-            "Garam secukupnya",
-            "Merica secukupnya"
-        ],
-        "viewCount": 890,
-        "category": "Makanan Utama",
-        "updatedAt": "2025-06-18T10:30:00.000000",
-        "favoriteCount": 67
+
+    toggleFavoriteRecipe: async (recipeId, isAddingFavorite) => {
+        // Simulasi API call
+        await new Promise(resolve => setTimeout(resolve, 500));
+        return {
+            success: true,
+            data: { recipeId, isAddingFavorite }
+        };
     },
-    "DEF456GHI": {
-        "rating": 4.8,
-        "description": "Minuman segar yang menyegarkan di cuaca panas, dibuat dengan buah-buahan segar pilihan.",
-        "title": "Es Buah Segar",
-        "isActive": true,
-        "steps": [
-            {
-                "instruction": "Potong semua buah menjadi potongan kecil",
-                "stepNumber": 1
-            },
-            {
-                "instruction": "Siapkan sirup dan air es dalam gelas saji",
-                "stepNumber": 2
-            },
-            {
-                "instruction": "Masukkan potongan buah ke dalam gelas",
-                "stepNumber": 3
-            },
-            {
-                "instruction": "Tambahkan es batu dan hiasan sesuai selera",
-                "stepNumber": 4
-            }
-        ],
-        "userId": "DEF456",
-        "difficulty": "Mudah",
-        "duration": 15,
-        "createdAt": "2025-06-17T08:15:00.000000",
-        "servings": 1,
-        "reviewCount": 8,
-        "imageUrl": "https://images.unsplash.com/photo-1546548970-71785318a17b?w=400&h=300&fit=crop",
-        "ingredients": [
-            "1 buah apel",
-            "1 buah jeruk",
-            "1/2 cup anggur",
-            "2 sdm sirup",
-            "Es batu secukupnya",
-            "Air mineral 200ml"
-        ],
-        "viewCount": 445,
-        "category": "Minuman",
-        "updatedAt": "2025-06-17T08:15:00.000000",
-        "favoriteCount": 23
+
+    incrementViewCount: async (recipeId) => {
+        // Simulasi API call
+        await new Promise(resolve => setTimeout(resolve, 200));
+        return {
+            success: true,
+            data: { recipeId }
+        };
     }
 };
 
@@ -158,14 +212,38 @@ const RecipePage = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Semua');
     const [favorites, setFavorites] = useState(new Set());
-
-    const recipes = Object.entries(sampleRecipes).map(([id, recipe]) => ({
-        id,
-        ...recipe
-    }));
+    const [recipes, setRecipes] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(null);
 
     const categories = ['Semua', 'Cemilan', 'Makanan Utama', 'Minuman'];
 
+    // Load recipes from Firebase
+    useEffect(() => {
+        loadRecipes();
+    }, []);
+
+    const loadRecipes = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+
+            const result = await mockFirebaseServices.getAllRecipes();
+
+            if (result.success) {
+                setRecipes(result.data);
+            } else {
+                setError(result.error || 'Gagal memuat resep');
+            }
+        } catch (err) {
+            setError('Terjadi kesalahan saat memuat resep');
+            console.error('Error loading recipes:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
+
+    // Filter recipes based on search and category
     const filteredRecipes = recipes.filter(recipe => {
         const matchesSearch = recipe.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
             recipe.description.toLowerCase().includes(searchTerm.toLowerCase());
@@ -173,16 +251,87 @@ const RecipePage = () => {
         return matchesSearch && matchesCategory && recipe.isActive;
     });
 
-    const toggleFavorite = (recipeId) => {
-        setFavorites(prev => {
-            const newFavorites = new Set(prev);
-            if (newFavorites.has(recipeId)) {
-                newFavorites.delete(recipeId);
+    const toggleFavorite = async (recipeId) => {
+        const isCurrentlyFavorite = favorites.has(recipeId);
+        const isAddingFavorite = !isCurrentlyFavorite;
+
+        try {
+            // Update local state optimistically
+            setFavorites(prev => {
+                const newFavorites = new Set(prev);
+                if (isCurrentlyFavorite) {
+                    newFavorites.delete(recipeId);
+                } else {
+                    newFavorites.add(recipeId);
+                }
+                return newFavorites;
+            });
+
+            // Update favorite count in Firebase
+            const result = await mockFirebaseServices.toggleFavoriteRecipe(recipeId, isAddingFavorite);
+
+            if (result.success) {
+                // Update local recipe data
+                setRecipes(prev => prev.map(recipe =>
+                    recipe.id === recipeId
+                        ? { ...recipe, favoriteCount: recipe.favoriteCount + (isAddingFavorite ? 1 : -1) }
+                        : recipe
+                ));
+
+                // Update selected recipe if it's currently viewed
+                if (selectedRecipe && selectedRecipe.id === recipeId) {
+                    setSelectedRecipe(prev => ({
+                        ...prev,
+                        favoriteCount: prev.favoriteCount + (isAddingFavorite ? 1 : -1)
+                    }));
+                }
             } else {
-                newFavorites.add(recipeId);
+                // Revert local state if Firebase update failed
+                setFavorites(prev => {
+                    const newFavorites = new Set(prev);
+                    if (isAddingFavorite) {
+                        newFavorites.delete(recipeId);
+                    } else {
+                        newFavorites.add(recipeId);
+                    }
+                    return newFavorites;
+                });
+                setError(result.error || 'Gagal memperbarui favorit');
             }
-            return newFavorites;
-        });
+        } catch (err) {
+            console.error('Error toggling favorite:', err);
+            setError('Terjadi kesalahan saat memperbarui favorit');
+
+            // Revert local state
+            setFavorites(prev => {
+                const newFavorites = new Set(prev);
+                if (isAddingFavorite) {
+                    newFavorites.delete(recipeId);
+                } else {
+                    newFavorites.add(recipeId);
+                }
+                return newFavorites;
+            });
+        }
+    };
+
+    const handleRecipeClick = async (recipe) => {
+        setSelectedRecipe(recipe);
+
+        // Increment view count
+        try {
+            const result = await mockFirebaseServices.incrementViewCount(recipe.id);
+            if (result.success) {
+                // Update local recipe data
+                setRecipes(prev => prev.map(r =>
+                    r.id === recipe.id
+                        ? { ...r, viewCount: r.viewCount + 1 }
+                        : r
+                ));
+            }
+        } catch (err) {
+            console.error('Error incrementing view count:', err);
+        }
     };
 
     const getDifficultyColor = (difficulty) => {
@@ -201,6 +350,37 @@ const RecipePage = () => {
             year: 'numeric'
         });
     };
+
+    // Show loading state
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+                    <p className="text-gray-600">Memuat resep...</p>
+                </div>
+            </div>
+        );
+    }
+
+    // Show error state
+    if (error) {
+        return (
+            <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+                <div className="text-center">
+                    <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        {error}
+                    </div>
+                    <button
+                        onClick={loadRecipes}
+                        className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+                    >
+                        Coba Lagi
+                    </button>
+                </div>
+            </div>
+        );
+    }
 
     if (selectedRecipe) {
         return (
@@ -329,21 +509,6 @@ const RecipePage = () => {
                                     ))}
                                 </div>
                             </div>
-
-                            {/* Reviews Section */}
-                            {/* <div className="bg-white rounded-xl shadow-sm p-6">
-                                <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center">
-                                    <MessageCircle className="h-5 w-5 mr-2 text-green-600" />
-                                    Ulasan ({selectedRecipe.reviewCount})
-                                </h2>
-                                <div className="text-center py-8 text-gray-500">
-                                    <MessageCircle className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                                    <p>Belum ada ulasan untuk resep ini</p>
-                                    <button className="mt-4 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                                        Tulis Ulasan Pertama
-                                    </button>
-                                </div>
-                            </div> */}
                         </div>
                     </div>
                 </div>
@@ -429,7 +594,7 @@ const RecipePage = () => {
                                 key={recipe.id}
                                 className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer ${viewMode === 'list' ? 'flex space-x-4 p-4' : 'overflow-hidden'
                                     }`}
-                                onClick={() => setSelectedRecipe(recipe)}
+                                onClick={() => handleRecipeClick(recipe)}
                             >
                                 {viewMode === 'grid' ? (
                                     <>
