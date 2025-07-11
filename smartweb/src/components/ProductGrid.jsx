@@ -86,7 +86,7 @@ const ProductGrid = ({
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log('Edit product:', product.name);
+                                        // console.log('Edit product:', product.name);
                                         // Navigasi ke halaman edit jika diperlukan
                                     }}
                                     className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl font-semibold shadow-md transition-all duration-200"
@@ -96,7 +96,7 @@ const ProductGrid = ({
                                 <button
                                     onClick={(e) => {
                                         e.stopPropagation();
-                                        console.log('Delete product:', product.name);
+                                        // console.log('Delete product:', product.name);
                                         // Tambahkan logika konfirmasi atau hapus di sini
                                     }}
                                     className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-3 rounded-xl shadow-md transition-all duration-200"
@@ -110,7 +110,7 @@ const ProductGrid = ({
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     // Handle buy button click
-                                    console.log('Buy button clicked for:', product.name);
+                                    // console.log('Buy button clicked for:', product.name);
                                 }}
                             >
                                 <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />

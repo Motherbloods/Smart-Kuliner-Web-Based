@@ -3,12 +3,12 @@ import { Link } from 'react-router-dom';
 
 const RecentOrdersTable = ({ recentOrders = [] }) => {
     const statusMap = {
-        menunggu_konfirmasi: { label: 'Menunggu Konfirmasi', color: 'bg-yellow-100 text-yellow-800' },
-        dikonfirmasi: { label: 'Dikonfirmasi', color: 'bg-blue-100 text-blue-800' },
-        diproses: { label: 'Diproses', color: 'bg-indigo-100 text-indigo-800' },
-        dikirim: { label: 'Dikirim', color: 'bg-purple-100 text-purple-800' },
-        selesai: { label: 'Selesai', color: 'bg-green-100 text-green-800' },
-        dibatalkan: { label: 'Dibatalkan', color: 'bg-red-100 text-red-800' },
+        pending: { label: 'Menunggu Konfirmasi', color: 'bg-yellow-100 text-yellow-800' },
+        confirmed: { label: 'Dikonfirmasi', color: 'bg-blue-100 text-blue-800' },
+        processing: { label: 'Diproses', color: 'bg-indigo-100 text-indigo-800' },
+        shipped: { label: 'Dikirim', color: 'bg-purple-100 text-purple-800' },
+        completed: { label: 'Selesai', color: 'bg-green-100 text-green-800' },
+        cancelled: { label: 'Dibatalkan', color: 'bg-red-100 text-red-800' },
     };
 
     return (
@@ -37,6 +37,7 @@ const RecentOrdersTable = ({ recentOrders = [] }) => {
                     <tbody className="bg-white divide-y divide-gray-200">
                         {recentOrders.length > 0 ? (
                             recentOrders.map((order, idx) => {
+                                const product = order.items?.[0];
                                 const status = statusMap[order.status] || {
                                     label: order.status.replace('_', ' '),
                                     color: 'bg-gray-100 text-gray-800'
@@ -45,13 +46,13 @@ const RecentOrdersTable = ({ recentOrders = [] }) => {
                                 return (
                                     <tr key={idx}>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                            {order.product_name}
+                                            {product?.productName || '-'}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            #{order.order_id}
+                                            #{order.id}
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                                            {new Date(order.created_at).toLocaleDateString('en-US', {
+                                            {new Date(order.createdAt).toLocaleDateString('id-ID', {
                                                 year: 'numeric',
                                                 month: 'short',
                                                 day: 'numeric'
@@ -60,9 +61,9 @@ const RecentOrdersTable = ({ recentOrders = [] }) => {
                                         <td className="px-6 py-4 whitespace-nowrap">
                                             <div className="flex items-center">
                                                 <div className="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white text-sm font-medium">
-                                                    {order.customer_name.charAt(0).toUpperCase()}
+                                                    {order.buyerName?.charAt(0).toUpperCase() || '?'}
                                                 </div>
-                                                <span className="ml-2 text-sm text-gray-900">{order.customer_name}</span>
+                                                <span className="ml-2 text-sm text-gray-900">{order.buyerName}</span>
                                             </div>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap">
@@ -71,7 +72,7 @@ const RecentOrdersTable = ({ recentOrders = [] }) => {
                                             </span>
                                         </td>
                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                            Rp. {order.amount.toLocaleString(undefined, { minimumFractionDigits: 2 })}
+                                            Rp. {order.totalAmount?.toLocaleString(undefined, { minimumFractionDigits: 2 })}
                                         </td>
                                     </tr>
                                 );
@@ -79,7 +80,7 @@ const RecentOrdersTable = ({ recentOrders = [] }) => {
                         ) : (
                             <tr>
                                 <td colSpan="6" className="px-6 py-4 text-center text-gray-500">
-                                    No recent orders found
+                                    Tidak ada pesanan terbaru
                                 </td>
                             </tr>
                         )}
