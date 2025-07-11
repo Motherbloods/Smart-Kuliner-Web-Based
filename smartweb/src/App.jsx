@@ -10,20 +10,41 @@ import ProductSearchPage from "./pages/ProductSearch";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PublicRoute } from "./components/PublicRoute";
 import { AuthProvider } from "./context/AuthProvider";
+import { useAuth } from "./hooks/useAuth";
 
 const DashboardLayout = () => {
+  const { userData, loading, isInitialized } = useAuth();
   const [activeMenu, setActiveMenu] = useState("products");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+
+  // Set default activeMenu setelah userData tersedia
+  useEffect(() => {
+    if (userData && isInitialized) {
+      setActiveMenu(userData.seller ? "dashboard" : "products");
+    }
+  }, [userData, isInitialized]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".dropdown-container")) {
-        // Close dropdowns (optional)
+        // Close dropdown (opsional)
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
+
+  // Tampilkan loading state sampai auth selesai diinisialisasi dan userData tersedia
+  if (!isInitialized || loading || (isInitialized && !userData)) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="flex flex-col items-center space-y-4">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+          <div className="text-gray-600 text-lg">Memuat data pengguna...</div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -80,6 +101,14 @@ export function App() {
           />
           <Route
             path="/"
+            element={
+              <ProtectedRoute>
+                <DashboardLayout />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard"
             element={
               <ProtectedRoute>
                 <DashboardLayout />

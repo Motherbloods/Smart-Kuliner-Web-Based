@@ -2,25 +2,33 @@ import React, { useState, useMemo, useEffect } from "react";
 import { ArrowUp } from "lucide-react";
 import productService from "../services/ProductServices";
 import ProductGrid from "../components/ProductGrid";
+import { useAuth } from "../hooks/useAuth";
 
 function ProductsList({ isSidebarOpen }) {
     const [products, setProducts] = useState([]);
     const [visibleCount, setVisibleCount] = useState(
         isSidebarOpen ? 4 : 6
     );
+    const { userData } = useAuth();
+    console.log(userData)
     const [sortBy, setSortBy] = useState("rating");
 
     useEffect(() => {
         const fetchProducts = async () => {
             try {
                 const fetched = await productService.getAllProducts();
-                setProducts(fetched);
+                const filtered = userData?.seller
+                    ? fetched.filter((p) => p.sellerId === userData.uid)
+                    : fetched;
+                setProducts(filtered);
             } catch (error) {
                 console.error(error.message);
             }
         };
-        fetchProducts();
-    }, []);
+        if (userData) {
+            fetchProducts(); // pastikan userData sudah tersedia sebelum ambil produk
+        }
+    }, [userData]);
 
     const sortedProducts = useMemo(() => {
         const sorted = [...products];
@@ -68,31 +76,48 @@ function ProductsList({ isSidebarOpen }) {
 
     const visibleProducts = sortedProducts.slice(0, visibleCount);
     return (
-        <div className="space-y-8 p-6 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
-            {/* Header Section */}
+        <div className="space-y-8 p-2 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                {/* Judul dan Deskripsi */}
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
-                        Produk Terlaris
+                        {userData?.seller ? 'Produk Anda' : 'Produk Terlaris'}
                     </h1>
                     <p className="text-gray-600">
-                        Temukan produk kuliner terbaik pilihan kami
+                        {userData?.seller
+                            ? 'Kelola dan pantau performa produk tokomu'
+                            : 'Temukan produk kuliner terbaik pilihan kami'}
                     </p>
                 </div>
 
-                {/* Enhanced Sort Dropdown */}
-                <div className="relative">
-                    <select
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                        className="appearance-none bg-white border border-gray-200 px-4 py-3 pr-8 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm hover:shadow-md transition-all duration-200"
-                    >
-                        <option value="rating">⭐ Rating Tertinggi</option>
-                        <option value="newest">🆕 Terbaru</option>
-                    </select>
-                    <ArrowUp className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-180 h-4 w-4 text-gray-400 pointer-events-none" />
+                <div className="flex items-center gap-3 flex-wrap justify-end">
+                    <div className="relative">
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="appearance-none bg-white border border-gray-200 px-4 py-3 pr-8 rounded-xl text-sm font-medium text-gray-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                            <option value="rating">⭐ Rating Tertinggi</option>
+                            <option value="newest">🆕 Terbaru</option>
+                        </select>
+                        <ArrowUp className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-180 h-4 w-4 text-gray-400 pointer-events-none" />
+                    </div>
+
+                    {/* Tombol Tambah Produk */}
+                    {userData?.seller && (
+                        <button
+                            onClick={() => {
+                                // Navigasi ke halaman tambah produk
+                                console.log('Navigasi ke halaman tambah produk');
+                            }}
+                            className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
+                        >
+                            + Tambah Produk
+                        </button>
+                    )}
                 </div>
             </div>
+
 
             {/* Product Grid */}
             <ProductGrid
@@ -100,6 +125,7 @@ function ProductsList({ isSidebarOpen }) {
                 onProductClick={handleProductClick}
                 gridResponsive="grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))]"
                 showBuyButton={true}
+                isSeller={userData?.seller}
             />
 
             {/* Enhanced Load More Button */}

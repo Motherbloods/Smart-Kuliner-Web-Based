@@ -14,13 +14,20 @@ export const AuthProvider = ({ children }) => {
             try {
                 if (user) {
                     dispatch({ type: 'SET_USER', payload: user });
+                    // Set loading true saat mulai fetch userData
+                    dispatch({ type: 'SET_LOADING', payload: true });
+
                     const userData = await authService.getUserData(user.uid);
                     dispatch({ type: 'SET_USER_DATA', payload: userData });
+
+                    // Set loading false setelah userData berhasil dimuat
+                    dispatch({ type: 'SET_LOADING', payload: false });
                 } else {
                     dispatch({ type: 'CLEAR_AUTH' });
                 }
             } catch (error) {
                 dispatch({ type: 'SET_ERROR', payload: error.message });
+                dispatch({ type: 'SET_LOADING', payload: false });
             }
         });
 
@@ -30,10 +37,16 @@ export const AuthProvider = ({ children }) => {
     const login = async (emailOrPhone, password) => {
         dispatch({ type: 'SET_LOADING', payload: true });
         try {
-            await authService.login(emailOrPhone, password);
+            const { user, userData } = await authService.login(emailOrPhone, password);
+            console.log('[DEBUG] userData after login:', userData);
+
+            dispatch({ type: 'SET_USER', payload: user });
+            dispatch({ type: 'SET_USER_DATA', payload: userData });
         } catch (error) {
             dispatch({ type: 'SET_ERROR', payload: error.message });
             throw error;
+        } finally {
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 
@@ -44,6 +57,8 @@ export const AuthProvider = ({ children }) => {
         } catch (error) {
             dispatch({ type: 'SET_ERROR', payload: error.message });
             throw error;
+        } finally {
+            dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
 

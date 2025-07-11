@@ -4,6 +4,7 @@ export const initialState = {
     loading: true,
     error: null,
     isAuthenticated: false,
+    isInitialized: false,
     userRole: 'guest'
 };
 
@@ -23,12 +24,20 @@ export const authReducer = (state, action) => {
             return {
                 ...state,
                 userData: action.payload,
-                userRole: action.payload?.seller ? 'seller' : 'user'
+                userRole: action.payload?.seller ? 'seller' : 'user',
+                isInitialized: true
             };
         case 'SET_ERROR':
             return { ...state, error: action.payload, loading: false };
         case 'CLEAR_AUTH':
-            return { ...initialState, loading: false };
+            return {
+                ...state,
+                user: null,
+                userData: null,
+                loading: false,
+                error: null,
+                isInitialized: true
+            };
         default:
             return state;
     }
