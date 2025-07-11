@@ -4,7 +4,7 @@ import productService from "../services/ProductServices";
 import ProductGrid from "../components/ProductGrid";
 import { useAuth } from "../hooks/useAuth";
 
-function ProductsList({ isSidebarOpen }) {
+function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
     const [products, setProducts] = useState([]);
     const [visibleCount, setVisibleCount] = useState(
         isSidebarOpen ? 4 : 6
@@ -45,7 +45,6 @@ function ProductsList({ isSidebarOpen }) {
         return sorted;
     }, [products, sortBy]);
 
-
     // Hitung berapa item per klik berdasarkan kondisi sidebar saat ini
     const perClickIncrement = isSidebarOpen ? 4 : 6;
 
@@ -72,7 +71,27 @@ function ProductsList({ isSidebarOpen }) {
         // You can add navigation logic here
     };
 
+    const handleEditClick = (productId) => {
+        if (onEditProduct) {
+            onEditProduct(productId);
+        }
+    };
+
+    const handleDeleteClick = async (productId) => {
+        if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
+            try {
+                await productService.deleteProduct(productId);
+                // Refresh products list
+                setProducts(prev => prev.filter(p => p.id !== productId));
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                alert('Gagal menghapus produk');
+            }
+        }
+    };
+
     const visibleProducts = sortedProducts.slice(0, visibleCount);
+
     return (
         <div className="space-y-8 p-2 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -104,10 +123,7 @@ function ProductsList({ isSidebarOpen }) {
                     {/* Tombol Tambah Produk */}
                     {userData?.seller && (
                         <button
-                            onClick={() => {
-                                // Navigasi ke halaman tambah produk
-                                console.log('Navigasi ke halaman tambah produk');
-                            }}
+                            onClick={onAddProduct}
                             className="bg-green-600 hover:bg-green-700 text-white px-4 py-3 rounded-xl text-sm font-semibold shadow-sm hover:shadow-md transition-all duration-200"
                         >
                             + Tambah Produk
@@ -116,11 +132,12 @@ function ProductsList({ isSidebarOpen }) {
                 </div>
             </div>
 
-
             {/* Product Grid */}
             <ProductGrid
                 products={visibleProducts}
                 onProductClick={handleProductClick}
+                onEditClick={handleEditClick}
+                onDeleteClick={handleDeleteClick}
                 gridResponsive="grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))]"
                 showBuyButton={true}
                 isSeller={userData?.seller}

@@ -4,6 +4,8 @@ import { Star, ShoppingCart } from 'lucide-react';
 const ProductGrid = ({
     products,
     onProductClick,
+    onEditClick,
+    onDeleteClick,
     gridResponsive = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
     showBuyButton = true,
     isSeller,
@@ -20,6 +22,20 @@ const ProductGrid = ({
     const handleProductClick = (product) => {
         if (onProductClick) {
             onProductClick(product.id || product._id);
+        }
+    };
+
+    const handleEditClick = (e, productId) => {
+        e.stopPropagation();
+        if (onEditClick) {
+            onEditClick(productId);
+        }
+    };
+
+    const handleDeleteClick = (e, productId) => {
+        e.stopPropagation();
+        if (onDeleteClick) {
+            onDeleteClick(productId);
         }
     };
 
@@ -84,21 +100,13 @@ const ProductGrid = ({
                         {isSeller ? (
                             <div className="flex justify-between gap-2">
                                 <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // console.log('Edit product:', product.name);
-                                        // Navigasi ke halaman edit jika diperlukan
-                                    }}
+                                    onClick={(e) => handleEditClick(e, product.id || product._id)}
                                     className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl font-semibold shadow-md transition-all duration-200"
                                 >
                                     Edit
                                 </button>
                                 <button
-                                    onClick={(e) => {
-                                        e.stopPropagation();
-                                        // console.log('Delete product:', product.name);
-                                        // Tambahkan logika konfirmasi atau hapus di sini
-                                    }}
+                                    onClick={(e) => handleDeleteClick(e, product.id || product._id)}
                                     className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-3 rounded-xl shadow-md transition-all duration-200"
                                 >
                                     🗑
@@ -110,7 +118,6 @@ const ProductGrid = ({
                                 onClick={(e) => {
                                     e.stopPropagation();
                                     // Handle buy button click
-                                    // console.log('Buy button clicked for:', product.name);
                                 }}
                             >
                                 <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />

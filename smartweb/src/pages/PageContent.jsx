@@ -1,9 +1,9 @@
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import KontenPage from "./Konten";
-import ProductsList from "./ProductList";
+import ProductManagement from "./ProductManagement"; // Ganti ke komponen baru
 import Profile from "./Profile";
 import RecipePage from "./Resep";
-import { useEffect } from "react";
 import authService from "../services/AuthServices";
 import Dashboard from "./Dashboard";
 
@@ -18,27 +18,23 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
                     navigate("/login");
                 });
             } else {
-                // Jika batal logout, arahkan kembali ke halaman dashboard atau yang lain
-                navigate("/");
+                navigate("/"); // Kembali ke home atau dashboard jika dibatalkan
             }
         }
     }, [activeMenu, navigate]);
+
     const renderContent = () => {
         switch (activeMenu) {
             case 'products':
-                return (
-                    <ProductsList isSidebarOpen={isSidebarOpen} />
-                );
+                return <ProductManagement isSidebarOpen={isSidebarOpen} />;
             case 'konten':
-                return (<KontenPage />)
+                return <KontenPage />;
             case 'resep':
-                return (
-                    <RecipePage />
-                )
+                return <RecipePage />;
             case 'profile':
-                return (<Profile />)
+                return <Profile />;
             case 'dashboard':
-                return (<Dashboard />)
+                return <Dashboard />;
             default:
                 return (
                     <div className="p-6">
