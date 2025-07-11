@@ -15,7 +15,6 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
             const confirmLogout = window.confirm("Apakah kamu yakin ingin logout?");
             if (confirmLogout) {
                 authService.logout().then(() => {
-                    console.log('ini login')
                     navigate("/login");
                 });
             } else {

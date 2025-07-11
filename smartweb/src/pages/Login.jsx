@@ -18,7 +18,6 @@ export default function LoginPage() {
         setError('');
 
         try {
-            console.log(typeof email)
             await login(email, password);
             // Simulate redirect
             navigate('/');

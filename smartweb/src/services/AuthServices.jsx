@@ -76,9 +76,6 @@ export const authService = {
             if (!userData) {
                 throw new Error('Data pengguna tidak ditemukan');
             }
-            console.log('ini user', user)
-            console.log('ini userData', userData)
-
             return { user, userData };
         } catch (error) {
             console.error('[ERROR] Login gagal:', error);

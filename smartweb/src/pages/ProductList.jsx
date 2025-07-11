@@ -10,7 +10,6 @@ function ProductsList({ isSidebarOpen }) {
         isSidebarOpen ? 4 : 6
     );
     const { userData } = useAuth();
-    console.log(userData)
     const [sortBy, setSortBy] = useState("rating");
 
     useEffect(() => {
@@ -39,7 +38,6 @@ function ProductsList({ isSidebarOpen }) {
             sorted.sort((a, b) => {
                 const dateA = new Date((a.createdAt || "").split(".")[0]);
                 const dateB = new Date((b.createdAt || "").split(".")[0]);
-                console.log(dateA)
                 return dateB - dateA;
             });
         }

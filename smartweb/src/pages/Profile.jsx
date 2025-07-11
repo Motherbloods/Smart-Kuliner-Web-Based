@@ -11,7 +11,6 @@ const db = getFirestore()
 
 const Profile = () => {
     const { userData, updateUserData } = useContext(AuthContext);
-    console.log(userData)
     const [isEditing, setIsEditing] = useState(false);
     const [editForm, setEditForm] = useState({});
     const [loading, setLoading] = useState(false);
@@ -53,7 +52,6 @@ const Profile = () => {
         try {
             const sellerRef = doc(db, 'sellers', userId);
             const sellerSnap = await getDoc(sellerRef);
-            console.log('Seller data:', sellerSnap.data());
 
             if (sellerSnap.exists()) {
                 const sellerDataFromFirestore = sellerSnap.data();
@@ -64,7 +62,6 @@ const Profile = () => {
                 const hoursSinceUpdate = lastUpdate ? (now - lastUpdate) / (1000 * 60 * 60) : 24;
 
                 if (hoursSinceUpdate > 1) { // Update jika lebih dari 1 jam
-                    console.log('Updating seller stats...');
                     await updateSellerStats(userId);
                 }
             } else {

@@ -63,9 +63,6 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
         if (!str) return '';
         return str.charAt(0).toUpperCase() + str.slice(1);
     };
-    console.log('[DEBUG] loading:', loading);
-    console.log('[DEBUG] userData:', userData);
-
 
     return (
         <div className={`fixed top-0 ${isSidebarOpen ? 'left-60' : 'left-16'} right-0 bg-white/80 backdrop-blur-md shadow-lg z-20 h-16 border-b border-gray-200/50 transition-all duration-300`}>
