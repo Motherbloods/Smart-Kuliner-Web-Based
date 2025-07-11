@@ -5,6 +5,7 @@ import Profile from "./Profile";
 import RecipePage from "./Resep";
 import { useEffect } from "react";
 import authService from "../services/AuthServices";
+import Dashboard from "./Dashboard";
 
 export const PageContent = ({ activeMenu, isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -19,16 +20,15 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
                 });
             } else {
                 // Jika batal logout, arahkan kembali ke halaman dashboard atau yang lain
-                navigate("/dashboard");
+                navigate("/");
             }
         }
-    }, [activeMenu]);
+    }, [activeMenu, navigate]);
     const renderContent = () => {
         switch (activeMenu) {
             case 'products':
                 return (
                     <ProductsList isSidebarOpen={isSidebarOpen} />
-
                 );
             case 'konten':
                 return (<KontenPage />)
@@ -38,6 +38,8 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
                 )
             case 'profile':
                 return (<Profile />)
+            case 'dashboard':
+                return (<Dashboard />)
             default:
                 return (
                     <div className="p-6">

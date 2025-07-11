@@ -13,7 +13,8 @@ import {
     getDocs,
     doc,
     setDoc,
-    getDoc
+    getDoc,
+    updateDoc
 } from 'firebase/firestore';
 
 const db = getFirestore();
@@ -23,12 +24,11 @@ export const authService = {
         try {
             let emailToLogin = emailOrPhone.trim();
 
-            // Jika input adalah nomor (bukan email), cari email-nya di Firestore
+            // Jika input bukan email, cari berdasarkan nomor telepon
             if (!emailOrPhone.includes('@')) {
-                console.log('[DEBUG] Mendeteksi input sebagai phone number:', emailOrPhone);
-
-                // Normalisasi nomor (contoh: +62 format)
                 let cleanPhone = emailOrPhone.replace(/[^\d+]/g, '');
+
+                // Normalisasi nomor telepon
                 if (!cleanPhone.startsWith('+')) {
                     if (cleanPhone.startsWith('0')) {
                         cleanPhone = '+62' + cleanPhone.substring(1);
@@ -39,12 +39,13 @@ export const authService = {
                     }
                 }
 
+                // Cari user berdasarkan nomor telepon
                 const q = query(
                     collection(db, 'users'),
                     where('phoneNumber', '==', cleanPhone)
                 );
-
                 const snapshot = await getDocs(q);
+
                 if (snapshot.empty) {
                     throw new Error('Nomor telepon tidak ditemukan');
                 }
@@ -53,17 +54,32 @@ export const authService = {
                 emailToLogin = userData.email;
             }
 
-            // Login pakai Firebase Auth
+            // Login dengan email
             const userCredential = await signInWithEmailAndPassword(auth, emailToLogin, password);
             const user = userCredential.user;
 
-            // Update lastLoginAt
-            const userRef = doc(db, 'users', user.uid);
-            await setDoc(userRef, {
-                lastLoginAt: new Date().toISOString()
-            }, { merge: true });
+            // Update lastLoginAt (optional, tidak perlu await)
+            try {
+                const userRef = doc(db, 'users', user.uid);
+                await updateDoc(userRef, {
+                    lastLoginAt: new Date().toISOString()
+                });
 
-            return { user };
+            } catch (e) {
+                console.warn('[WARNING] Gagal update lastLoginAt:', e.message);
+            }
+
+            // Ambil data user dari Firestore
+            const userDoc = await getDoc(doc(db, 'users', user.uid));
+            const userData = userDoc.exists() ? userDoc.data() : null;
+
+            if (!userData) {
+                throw new Error('Data pengguna tidak ditemukan');
+            }
+            console.log('ini user', user)
+            console.log('ini userData', userData)
+
+            return { user, userData };
         } catch (error) {
             console.error('[ERROR] Login gagal:', error);
             throw new Error(error.message || 'Login gagal');

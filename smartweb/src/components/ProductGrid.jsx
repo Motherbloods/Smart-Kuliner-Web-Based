@@ -6,6 +6,7 @@ const ProductGrid = ({
     onProductClick,
     gridResponsive = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4',
     showBuyButton = true,
+    isSeller,
     className = ''
 }) => {
     const formatPrice = (price) => {
@@ -80,7 +81,30 @@ const ProductGrid = ({
                             </div>
                         </div>
 
-                        {showBuyButton && (
+                        {isSeller ? (
+                            <div className="flex justify-between gap-2">
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log('Edit product:', product.name);
+                                        // Navigasi ke halaman edit jika diperlukan
+                                    }}
+                                    className="flex-1 bg-yellow-500 hover:bg-yellow-600 text-white py-2 rounded-xl font-semibold shadow-md transition-all duration-200"
+                                >
+                                    Edit
+                                </button>
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        console.log('Delete product:', product.name);
+                                        // Tambahkan logika konfirmasi atau hapus di sini
+                                    }}
+                                    className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-3 rounded-xl shadow-md transition-all duration-200"
+                                >
+                                    🗑
+                                </button>
+                            </div>
+                        ) : showBuyButton && (
                             <button
                                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
                                 onClick={(e) => {
