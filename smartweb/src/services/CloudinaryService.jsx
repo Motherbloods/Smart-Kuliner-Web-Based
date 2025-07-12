@@ -1,4 +1,6 @@
 import { cloudinaryConfig } from '../config/cloudinary';
+import CryptoJS from 'crypto-js';
+
 export const imageUploadService = {
     // Upload single image
     uploadSingleImage: async (file, folder = 'products') => {
@@ -33,7 +35,7 @@ export const imageUploadService = {
         try {
             const formData = new FormData();
             formData.append('file', file);
-            formData.append('upload_preset', this.config.uploadPreset);
+            formData.append('upload_preset', cloudinaryConfig.uploadPreset);
             formData.append('folder', folder);
 
             if (type === 'video') {
@@ -41,7 +43,7 @@ export const imageUploadService = {
             }
 
             const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${this.config.cloudName}/${type}/upload`,
+                `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/${type}/upload`,
                 {
                     method: 'POST',
                     body: formData
@@ -76,16 +78,16 @@ export const imageUploadService = {
     async deleteFromCloudinary(publicId, resourceType = 'image') {
         try {
             const timestamp = Math.round(new Date().getTime() / 1000);
-            const signature = this.generateSignature(publicId, timestamp);
+            const signature = this.generateSignature(publicId, cloudinaryConfig.apiSecret);
 
             const formData = new FormData();
             formData.append('public_id', publicId);
             formData.append('signature', signature);
-            formData.append('api_key', this.config.apiKey);
+            formData.append('api_key', cloudinaryConfig.apiKey);
             formData.append('timestamp', timestamp);
 
             const response = await fetch(
-                `https://api.cloudinary.com/v1_1/${this.config.cloudName}/${resourceType}/destroy`,
+                `https://api.cloudinary.com/v1_1/${cloudinaryConfig.cloudName}/${resourceType}/destroy`,
                 {
                     method: 'POST',
                     body: formData
@@ -117,9 +119,21 @@ export const imageUploadService = {
      * @param {number} timestamp - Timestamp
      * @returns {string} Generated signature
      */
-    // generateSignature(publicId, timestamp) {
-    //     // Implementation depends on your signature generation method
-    //     // This is a placeholder - implement according to Cloudinary's documentation
-    //     return '';
-    // }
+    generateSignature(params, apiSecret) {
+        // Sort parameters by key
+        const sortedKeys = Object.keys(params)
+            .filter(key => key !== 'signature' && key !== 'api_key')
+            .sort();
+
+        // Create parameter string
+        const paramString = sortedKeys
+            .map(key => `${key}=${params[key]}`)
+            .join('&') + apiSecret;
+
+        console.log('🔐 Signature string:', paramString); // Debug log
+
+        // Generate SHA1 hash using CryptoJS
+        const hash = CryptoJS.SHA1(paramString);
+        return hash.toString(CryptoJS.enc.Hex);
+    }
 };

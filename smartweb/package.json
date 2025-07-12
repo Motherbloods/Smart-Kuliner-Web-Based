@@ -12,6 +12,7 @@
   "dependencies": {
     "@tailwindcss/vite": "^4.1.10",
     "chart.js": "^4.5.0",
+    "crypto-js": "^4.2.0",
     "firebase": "^11.10.0",
     "lucide-react": "^0.519.0",
     "react": "^19.1.0",

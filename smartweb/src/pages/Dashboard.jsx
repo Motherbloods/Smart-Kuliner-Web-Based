@@ -158,10 +158,6 @@ const Dashboard = () => {
     const handleYearChange = (year) => {
         setSelectedYear(year);
     };
-
-    console.log('Current filter:', filter);
-    console.log('Chart data:', chartData);
-
     return (
         <div className="space-y-6">
             {/* Stats */}

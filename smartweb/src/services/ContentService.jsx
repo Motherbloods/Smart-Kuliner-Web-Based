@@ -11,7 +11,8 @@ import {
     limit,
     serverTimestamp,
     getFirestore,
-    writeBatch
+    writeBatch,
+    setDoc
 } from 'firebase/firestore';
 import { imageUploadService } from './CloudinaryService.jsx';
 import { firebaseApp } from '../config/firebase';
@@ -43,29 +44,31 @@ class KontenService {
                 );
             }
 
+            const now = new Date().toISOString();
+
             const newKonten = {
                 ...kontenData,
                 imageUrl,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
+                createdAt: now,
+                updatedAt: now,
                 likes: 0,
                 views: 0,
-                status: 'Published'
+                status: kontenData.status || 'Published'
             };
 
             const docRef = await addDoc(collection(db, this.kontenCollection), newKonten);
+            await setDoc(docRef, { id: docRef.id }, { merge: true });
 
             return {
                 id: docRef.id,
-                ...newKonten,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                ...newKonten
             };
         } catch (error) {
             console.error('Error creating konten:', error);
             throw error;
         }
     }
+
 
     /**
      * Get all promotional content with optional filters

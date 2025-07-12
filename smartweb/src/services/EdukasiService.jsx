@@ -11,10 +11,12 @@ import {
     limit,
     serverTimestamp,
     getFirestore,
-    writeBatch
+    writeBatch,
+    setDoc
 } from 'firebase/firestore';
 import { imageUploadService } from './CloudinaryService.jsx';
 import { firebaseApp } from '../config/firebase';
+import { capitalizeWord } from '../utils/formatHelpers.js';
 
 const db = getFirestore(firebaseApp);
 
@@ -37,6 +39,7 @@ class EdukasiService {
             let videoUrl = '';
             let imageUrl = '';
 
+            // Upload video jika ada
             if (videoFile) {
                 videoUrl = await this.imageUploadService.uploadToCloudinary(
                     videoFile,
@@ -45,6 +48,7 @@ class EdukasiService {
                 );
             }
 
+            // Upload thumbnail jika ada
             if (thumbnailFile) {
                 imageUrl = await this.imageUploadService.uploadToCloudinary(
                     thumbnailFile,
@@ -53,25 +57,54 @@ class EdukasiService {
                 );
             }
 
+            const now = new Date().toISOString();
+
+            // Proses tags dengan lebih aman
+            let processedTags = [];
+            if (Array.isArray(edukasiData.tags)) {
+                processedTags = edukasiData.tags.filter(tag => tag && tag.trim() !== '');
+            } else if (typeof edukasiData.tags === 'string' && edukasiData.tags.trim() !== '') {
+                processedTags = [edukasiData.tags.trim()];
+            }
+
             const newEdukasi = {
-                ...edukasiData,
-                videoUrl,
-                imageUrl,
-                createdAt: serverTimestamp(),
-                updatedAt: serverTimestamp(),
-                likes: 0,
+                uid: `video ke ${new Date().toISOString()}`,
+                sellerId: edukasiData.sellerId || '',
+                title: edukasiData.title || '',
+                description: edukasiData.description || '',
+                videoUrl: videoUrl || '',
+                imageUrl: imageUrl || '',
+                category: capitalizeWord(edukasiData.category) || '',
+                readTime: parseInt(edukasiData.readTime) || 0,
+                createdAt: now,
+                updatedAt: now,
+                status: edukasiData.status || 'Draft',
+                namaToko: edukasiData.namaToko || '',
                 views: 0,
-                status: 'Published'
+                likes: 0,
+                tags: processedTags // Pastikan tidak null atau undefined
             };
 
-            const docRef = await addDoc(collection(db, this.edukasiCollection), newEdukasi);
+            // Hapus field yang kosong untuk menghindari masalah
+            const cleanedEdukasi = Object.fromEntries(
+                Object.entries(newEdukasi).filter(([key, value]) => {
+                    // Jangan hapus field yang bernilai 0 atau false
+                    if (value === 0 || value === false) return true;
+                    // Hapus field yang null, undefined, atau string kosong
+                    return value !== null && value !== undefined && value !== '';
+                })
+            );
+
+            console.log('Data yang akan disimpan:', cleanedEdukasi);
+
+            const docRef = await addDoc(collection(db, this.edukasiCollection), cleanedEdukasi);
+            await setDoc(docRef, { ...cleanedEdukasi, id: docRef.id }, { merge: true });
 
             return {
                 id: docRef.id,
-                ...newEdukasi,
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                ...cleanedEdukasi
             };
+
         } catch (error) {
             console.error('Error creating edukasi:', error);
             throw error;
