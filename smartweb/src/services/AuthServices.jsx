@@ -16,8 +16,9 @@ import {
     getDoc,
     updateDoc
 } from 'firebase/firestore';
+import { firebaseApp } from '../config/firebase';
 
-const db = getFirestore();
+const db = getFirestore(firebaseApp);
 
 export const authService = {
     login: async (emailOrPhone, password) => {

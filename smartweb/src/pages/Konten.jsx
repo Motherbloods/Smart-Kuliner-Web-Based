@@ -4,8 +4,8 @@ import {
     ChevronLeft, ChevronRight, RefreshCw, Search, Filter,
     AlertCircle, Loader2
 } from 'lucide-react';
-import KontenService from '../services/KontenService';
 import { useAuth } from '../hooks/useAuth';
+import { MainKontenService } from "../services/Index.js"
 
 const KontenPage = () => {
     // State Management
@@ -49,8 +49,8 @@ const KontenPage = () => {
 
                 // Load content data
                 const [edukasiResult, promosiResult] = await Promise.all([
-                    KontenService.getAllEdukasi(),
-                    KontenService.getAllKonten()
+                    MainKontenService.getAllEdukasi(),
+                    MainKontenService.getAllKonten()
                 ]);
 
                 setEdukasiData(edukasiResult);
@@ -58,7 +58,7 @@ const KontenPage = () => {
 
                 // Load user likes jika user sudah login
                 if (userData.uid) {
-                    const userLikes = await KontenService.getUserLikedContent(userData.uid);
+                    const userLikes = await MainKontenService.getUserLikedContent(userData.uid);
                     const allLikedIds = new Set([
                         ...userLikes.edukasi,
                         ...userLikes.konten
@@ -87,7 +87,7 @@ const KontenPage = () => {
             setLoading(true);
             setError(null);
 
-            const { edukasi, konten } = await KontenService.getAllContent({
+            const { edukasi, konten } = await MainKontenService.getAllContent({
                 ...filters,
                 limit: 50 // Limit untuk performa
             });
@@ -168,7 +168,7 @@ const KontenPage = () => {
         try {
             // Add view count
             const type = activeTab === 'edukasi' ? 'edukasi' : 'konten';
-            await KontenService.addView(item.id, type);
+            await MainKontenService.addView(item.id, type);
 
             // Update view count in state
             const updateFunction = activeTab === 'edukasi' ? setEdukasiData : setPromosiData;
@@ -197,7 +197,7 @@ const KontenPage = () => {
 
         try {
             const type = activeTab === 'edukasi' ? 'edukasi' : 'konten';
-            const result = await KontenService.toggleLike(id, type, userData.uid);
+            const result = await MainKontenService.toggleLike(id, type, userData.uid);
 
             if (result.success) {
                 // Update like count di state
@@ -236,7 +236,7 @@ const KontenPage = () => {
     const refreshUserLikes = useCallback(async () => {
         if (userData.uid) {
             try {
-                const userLikes = await KontenService.getUserLikedContent(userData.uid);
+                const userLikes = await MainKontenService.getUserLikedContent(userData.uid);
                 const allLikedIds = new Set([
                     ...userLikes.edukasi,
                     ...userLikes.konten
@@ -262,14 +262,14 @@ const KontenPage = () => {
     //     if (!userData.uid) return { edukasi: [], konten: [] };
 
     //     try {
-    //         const userLikes = await KontenService.getUserLikedContent(userData.uid);
+    //         const userLikes = await MainKontenService.getUserLikedContent(userData.uid);
 
     //         // Ambil detail konten yang di-like
     //         const likedEdukasiPromises = userLikes.edukasi.map(id =>
-    //             KontenService.getEdukasiById(id).catch(() => null)
+    //             MainKontenService.getEdukasiById(id).catch(() => null)
     //         );
     //         const likedKontenPromises = userLikes.konten.map(id =>
-    //             KontenService.getKontenById(id).catch(() => null)
+    //             MainKontenService.getKontenById(id).catch(() => null)
     //         );
 
     //         const [likedEdukasiDetails, likedKontenDetails] = await Promise.all([

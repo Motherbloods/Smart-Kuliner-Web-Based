@@ -6,11 +6,14 @@ import { useAuth } from "../hooks/useAuth";
 
 function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
     const [products, setProducts] = useState([]);
-    const [visibleCount, setVisibleCount] = useState(
-        isSidebarOpen ? 4 : 6
-    );
+    const [loadMoreClicks, setLoadMoreClicks] = useState(0); // Track berapa kali load more diklik
     const { userData } = useAuth();
     const [sortBy, setSortBy] = useState("rating");
+
+    // Hitung items per row dan initial visible count
+    const itemsPerRow = isSidebarOpen ? 3 : 4;
+    const initialVisibleCount = itemsPerRow * 2; // 2 baris pertama
+    const visibleCount = initialVisibleCount + (loadMoreClicks * itemsPerRow);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -25,9 +28,14 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
             }
         };
         if (userData) {
-            fetchProducts(); // pastikan userData sudah tersedia sebelum ambil produk
+            fetchProducts();
         }
     }, [userData]);
+
+    // Reset loadMoreClicks ketika sidebar berubah
+    useEffect(() => {
+        setLoadMoreClicks(0);
+    }, [isSidebarOpen]);
 
     const sortedProducts = useMemo(() => {
         const sorted = [...products];
@@ -45,30 +53,12 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
         return sorted;
     }, [products, sortBy]);
 
-    // Hitung berapa item per klik berdasarkan kondisi sidebar saat ini
-    const perClickIncrement = isSidebarOpen ? 4 : 6;
-
-    // Effect untuk menyesuaikan visibleCount saat sidebar berubah
-    useEffect(() => {
-        const currentRows = Math.ceil(visibleCount / (isSidebarOpen ? 8 : 6));
-        const newVisibleCount = currentRows * perClickIncrement;
-
-        if (newVisibleCount >= visibleCount) {
-            setVisibleCount(newVisibleCount);
-        } else {
-            const minRows = Math.ceil(visibleCount / perClickIncrement);
-            setVisibleCount(minRows * perClickIncrement);
-        }
-    }, [isSidebarOpen, perClickIncrement]);
-
     const handleLoadMore = () => {
-        setVisibleCount((prev) => prev + perClickIncrement);
+        setLoadMoreClicks(prev => prev + 1);
     };
 
     const handleProductClick = (productId) => {
-        // Navigate to product detail page
         console.log(`Navigate to product detail: ${productId}`);
-        // You can add navigation logic here
     };
 
     const handleEditClick = (productId) => {
@@ -81,7 +71,6 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
         if (window.confirm('Apakah Anda yakin ingin menghapus produk ini?')) {
             try {
                 await productService.deleteProduct(productId);
-                // Refresh products list
                 setProducts(prev => prev.filter(p => p.id !== productId));
             } catch (error) {
                 console.error('Error deleting product:', error);
@@ -92,10 +81,14 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
 
     const visibleProducts = sortedProducts.slice(0, visibleCount);
 
+    // Tentukan grid responsive berdasarkan sidebar
+    const gridResponsive = isSidebarOpen
+        ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
+        : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4";
+
     return (
         <div className="space-y-8 p-2 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                {/* Judul dan Deskripsi */}
                 <div>
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
                         {userData?.seller ? 'Produk Anda' : 'Produk Terlaris'}
@@ -120,7 +113,6 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
                         <ArrowUp className="absolute right-3 top-1/2 transform -translate-y-1/2 rotate-180 h-4 w-4 text-gray-400 pointer-events-none" />
                     </div>
 
-                    {/* Tombol Tambah Produk */}
                     {userData?.seller && (
                         <button
                             onClick={onAddProduct}
@@ -138,12 +130,12 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
                 onProductClick={handleProductClick}
                 onEditClick={handleEditClick}
                 onDeleteClick={handleDeleteClick}
-                gridResponsive="grid-cols-[repeat(auto-fill,_minmax(280px,_1fr))]"
+                gridResponsive={gridResponsive}
                 showBuyButton={true}
                 isSeller={userData?.seller}
             />
 
-            {/* Enhanced Load More Button */}
+            {/* Load More Button */}
             {visibleCount < sortedProducts.length && (
                 <div className="flex justify-center">
                     <button

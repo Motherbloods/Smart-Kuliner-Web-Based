@@ -391,7 +391,7 @@ export const getAllRecipesWithLikeStatus = async (userId, isSeller) => {
 };
 
 // Update - Menambah view count
-export const incrementViewCount = async (isSeller, recipeId) => {
+export const incrementViewCount = async (recipeId) => {
     try {
         const docRef = doc(db, COLLECTION_NAME, recipeId);
         await updateDoc(docRef, {

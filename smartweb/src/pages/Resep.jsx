@@ -234,6 +234,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
 
     const handleRecipeClick = async (recipe) => {
         setSelectedRecipe(recipe);
+        console.log(isSeller)
         if (isSeller) return;
         // Increment view count
         try {
@@ -340,7 +341,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                     >
                                         <Heart className={`h-5 w-5 ${isRecipeLiked(selectedRecipe.id) ? 'fill-current' : ''}`} />
                                     </button>}
-                                {currentUserId && (
+                                {currentUserId && isSeller && (
                                     <button
                                         onClick={() => onEditRecipe(selectedRecipe)}
                                         className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors"
@@ -348,9 +349,6 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                         <Pencil className="h-5 w-5" />
                                     </button>
                                 )}
-                                {!isSeller && <button className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors">
-                                    <Bookmark className="h-5 w-5" />
-                                </button>}
                             </div>
                         </div>
                     </div>
@@ -455,13 +453,13 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                             <h1 className="text-2xl font-bold text-gray-900">Resep</h1>
                         </div>
                         <div className="flex items-center space-x-3">
-                            <button
+                            {isSeller && <button
                                 onClick={onAddRecipe}
                                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                             >
                                 <Plus className="h-4 w-4" />
                                 <span>Tambah Resep</span>
-                            </button>
+                            </button>}
                             <div className="flex bg-gray-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
