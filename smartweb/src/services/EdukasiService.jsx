@@ -159,6 +159,41 @@ class EdukasiService {
     }
 
     /**
+ * Get all edukasi content by seller ID
+ * @param {string} sellerId - The seller's UID
+ * @returns {Promise<Array>} List of edukasi content
+ */
+    async getEdukasiBySellerId(sellerId) {
+        try {
+            const edukasiRef = collection(db, this.edukasiCollection);
+            const q = query(
+                edukasiRef,
+                where('sellerId', '==', sellerId),
+                orderBy('createdAt', 'desc')
+            );
+
+            const snapshot = await getDocs(q);
+            const results = [];
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                results.push({
+                    id: docSnap.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+                    updatedAt: data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt
+                });
+            });
+
+            return results;
+        } catch (error) {
+            console.error('Error getting edukasi by sellerId:', error);
+            throw error;
+        }
+    }
+
+
+    /**
      * Get educational content by ID
      * @param {string} id - Educational content ID
      * @returns {Promise<Object>} Educational content

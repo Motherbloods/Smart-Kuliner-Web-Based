@@ -83,19 +83,21 @@ export const orderService = {
     // Ambil pesanan berdasarkan sellerId
     getOrdersBySeller: async (sellerId) => {
         try {
-            const q = query(
-                collection(db, 'orders'),
-                where('sellerId', '==', sellerId),
-                orderBy('createdAt', 'desc')
-            );
+            const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
             const snapshot = await getDocs(q);
-            return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+
+            const filteredOrders = snapshot.docs
+                .map(doc => ({ id: doc.id, ...doc.data() }))
+                .filter(order =>
+                    order.items.some(item => item.sellerId === sellerId)
+                );
+
+            return filteredOrders;
         } catch (error) {
             console.error('[ERROR] Gagal mengambil order seller:', error);
             throw new Error('Gagal mengambil order dari seller');
         }
     },
-
     // Tambah order baru
     createOrder: async (orderData) => {
         try {
@@ -113,14 +115,36 @@ export const orderService = {
 
     // Update status order
     updateOrderStatus: async (orderId, status) => {
+        console.log('ini status', status);
         try {
             const orderRef = doc(db, 'orders', orderId);
-            await updateDoc(orderRef, { status });
+
+            const timestampFieldMap = {
+                confirmed: 'confirmedAt',
+                processing: 'processingAt',
+                shipped: 'shippedAt',
+                completed: 'completedAt',
+                cancelled: 'cancelledAt',
+                delivered: 'deliveredAt' // optional, if you have this step
+            };
+
+            const updateData = {
+                status,
+            };
+
+            // Jika status punya field waktu yang cocok, tambahkan timestamp-nya
+            const timestampField = timestampFieldMap[status];
+            if (timestampField) {
+                updateData[timestampField] = new Date().toISOString(); // simpan sebagai ISO string
+            }
+
+            await updateDoc(orderRef, updateData);
         } catch (error) {
             console.error('[ERROR] Gagal update status order:', error);
             throw new Error('Gagal memperbarui status pesanan');
         }
     },
+
 
     // Ambil detail order by ID
     getOrderById: async (orderId) => {

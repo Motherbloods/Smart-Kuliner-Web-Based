@@ -122,6 +122,41 @@ class KontenService {
      * @param {string} id - Promotional content ID
      * @returns {Promise<Object>} Promotional content
      */
+
+    /**
+ * Get all konten (promotional content) by seller ID
+ * @param {string} sellerId - The seller's UID
+ * @returns {Promise<Array>} List of konten
+ */
+    async getKontenBySellerId(sellerId) {
+        try {
+            const kontenRef = collection(db, this.kontenCollection);
+            const q = query(
+                kontenRef,
+                where('sellerId', '==', sellerId),
+                orderBy('createdAt', 'desc')
+            );
+
+            const snapshot = await getDocs(q);
+            const results = [];
+
+            snapshot.forEach(docSnap => {
+                const data = docSnap.data();
+                results.push({
+                    id: docSnap.id,
+                    ...data,
+                    createdAt: data.createdAt?.toDate?.()?.toISOString() || data.createdAt,
+                    updatedAt: data.updatedAt?.toDate?.()?.toISOString() || data.updatedAt
+                });
+            });
+
+            return results;
+        } catch (error) {
+            console.error('Error getting konten by sellerId:', error);
+            throw error;
+        }
+    }
+
     async getKontenById(id) {
         try {
             const docRef = doc(db, this.kontenCollection, id);

@@ -56,8 +56,12 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
 
                 // Load content data
                 const [edukasiResult, promosiResult] = await Promise.all([
-                    MainKontenService.getAllEdukasi(),
-                    MainKontenService.getAllKonten()
+                    isSeller
+                        ? MainKontenService.getEdukasiBySellerId(userData.uid)
+                        : MainKontenService.getAllEdukasi(),
+                    isSeller
+                        ? MainKontenService.getKontenBySellerId(userData.uid)
+                        : MainKontenService.getAllKonten()
                 ]);
 
                 setEdukasiData(edukasiResult || []);

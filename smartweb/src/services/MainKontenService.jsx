@@ -32,6 +32,9 @@ class MainKontenService {
     async getAllEdukasi(filters = {}) {
         return await this.edukasiService.getAllEdukasi(filters);
     }
+    async getEdukasiBySellerId(sellerId) {
+        return await this.edukasiService.getEdukasiBySellerId(sellerId);
+    }
 
     /**
      * Get educational content by ID
@@ -68,6 +71,10 @@ class MainKontenService {
      */
     async getAllKonten(filters = {}) {
         return await this.kontenService.getAllKonten(filters);
+    }
+
+    async getKontenBySellerId(sellerId) {
+        return await this.kontenService.getKontenBySellerId(sellerId);
     }
 
     /**

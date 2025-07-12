@@ -9,6 +9,7 @@ import {
     LogOut,
     Home,
     LogIn,
+    ListOrdered,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
@@ -24,7 +25,7 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
 
     // Menu khusus user biasa
     const userMenuItems = [
-        { id: 'products', label: 'Produk', icon: UtensilsCrossed },
+        { id: 'products', label: 'Produk Kuliner', icon: UtensilsCrossed },
         { id: 'konten', label: 'Konten', icon: MonitorPlay },
         { id: 'resep', label: 'Resep', icon: FileText },
         { id: 'profile', label: 'Informasi Pengguna', icon: User },
@@ -34,7 +35,8 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle }) => {
     // Menu untuk seller
     const sellerMenuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: Home },
-        { id: 'products', label: 'Produk', icon: UtensilsCrossed },
+        { id: 'order', label: 'Order List', icon: ListOrdered },
+        { id: 'products', label: 'Produk Saya', icon: UtensilsCrossed },
         { id: 'konten', label: 'Konten', icon: MonitorPlay },
         { id: 'resep', label: 'Resep', icon: FileText },
         { id: 'profile', label: 'Informasi Pengguna', icon: User },
