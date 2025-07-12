@@ -69,10 +69,10 @@ const ProductGrid = ({
                         <div className="flex items-center mb-2">
                             <Star className="h-4 w-4 text-yellow-400 fill-current" />
                             <span className="ml-1 text-sm font-medium text-gray-700">
-                                {product.rating || '4.5'}
+                                {product.rating}
                             </span>
                             <span className="text-gray-400 text-sm ml-2">
-                                ({product.reviews || 125} ulasan)
+                                ({product.reviews || 0} ulasan)
                             </span>
                         </div>
 

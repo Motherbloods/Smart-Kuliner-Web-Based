@@ -6,6 +6,7 @@ import Profile from "./Profile";
 import RecipePage from "./Resep";
 import authService from "../services/AuthServices";
 import Dashboard from "./Dashboard";
+import RecipeManagement from "./RecipeManagement";
 
 export const PageContent = ({ activeMenu, isSidebarOpen }) => {
     const navigate = useNavigate();
@@ -30,7 +31,7 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
             case 'konten':
                 return <KontenPage />;
             case 'resep':
-                return <RecipePage />;
+                return <RecipeManagement isSidebarOpen={isSidebarOpen} />;
             case 'profile':
                 return <Profile />;
             case 'dashboard':

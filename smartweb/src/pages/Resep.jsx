@@ -14,224 +14,82 @@ import {
     Search,
     Grid,
     List,
-    Loader2
+    Loader2,
+    Plus,
+    Pencil
 } from 'lucide-react';
+import {
+    getAllRecipesWithLikeStatus,
+    incrementViewCount,
+    toggleFavoriteRecipe,
+    getUserLikedRecipes,
+    getAllRecipes,
+    getRecipesBySeller
+} from '../services/RecipeServices';
 
-// Mock Firebase services untuk demonstrasi
-const mockFirebaseServices = {
-    getAllRecipes: async () => {
-        // Simulasi delay loading
-        await new Promise(resolve => setTimeout(resolve, 1000));
-
-        return {
-            success: true,
-            data: [
-                {
-                    id: '1',
-                    title: 'Nasi Goreng Spesial',
-                    description: 'Nasi goreng dengan bumbu rahasia dan topping lengkap yang menggugah selera',
-                    category: 'Makanan Utama',
-                    difficulty: 'Sedang',
-                    duration: 30,
-                    servings: 4,
-                    rating: 4.5,
-                    viewCount: 1250,
-                    favoriteCount: 89,
-                    imageUrl: 'https://images.unsplash.com/photo-1603133872878-684f208fb84b?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                    createdAt: '2024-01-15T10:30:00Z',
-                    isActive: true,
-                    ingredients: [
-                        '3 piring nasi putih',
-                        '2 butir telur',
-                        '100g ayam fillet, potong dadu',
-                        '3 siung bawang putih, cincang',
-                        '2 siung bawang merah, iris tipis',
-                        '2 sdm kecap manis',
-                        '1 sdm kecap asin',
-                        '1 sdt garam',
-                        '1/2 sdt merica bubuk',
-                        '2 sdm minyak goreng'
-                    ],
-                    steps: [
-                        {
-                            stepNumber: 1,
-                            instruction: 'Panaskan minyak dalam wajan dengan api sedang. Tumis bawang putih dan bawang merah hingga harum dan kecokelatan.'
-                        },
-                        {
-                            stepNumber: 2,
-                            instruction: 'Masukkan ayam fillet yang sudah dipotong dadu. Masak hingga ayam berubah warna dan matang sempurna.'
-                        },
-                        {
-                            stepNumber: 3,
-                            instruction: 'Kocok telur dalam mangkuk terpisah. Buat scrambled egg di sisi wajan, lalu campur dengan tumisan ayam.'
-                        },
-                        {
-                            stepNumber: 4,
-                            instruction: 'Masukkan nasi putih yang sudah dingin. Aduk rata dengan spatula hingga tercampur sempurna dengan bumbu.'
-                        },
-                        {
-                            stepNumber: 5,
-                            instruction: 'Tambahkan kecap manis, kecap asin, garam, dan merica. Aduk rata dan masak selama 3-5 menit.'
-                        },
-                        {
-                            stepNumber: 6,
-                            instruction: 'Koreksi rasa sesuai selera. Angkat dan sajikan selagi hangat dengan pelengkap seperti kerupuk dan acar.'
-                        }
-                    ]
-                },
-                {
-                    id: '2',
-                    title: 'Es Teh Manis Segar',
-                    description: 'Minuman segar yang sempurna untuk cuaca panas, dengan rasa teh yang pas dan manis yang tepat',
-                    category: 'Minuman',
-                    difficulty: 'Mudah',
-                    duration: 10,
-                    servings: 2,
-                    rating: 4.2,
-                    viewCount: 856,
-                    favoriteCount: 45,
-                    imageUrl: 'https://images.unsplash.com/photo-1556679343-c7306c1976bc?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                    createdAt: '2024-01-10T14:20:00Z',
-                    isActive: true,
-                    ingredients: [
-                        '2 kantong teh celup',
-                        '400ml air panas',
-                        '3 sdm gula pasir',
-                        'Es batu secukupnya',
-                        'Daun mint untuk garnish (opsional)'
-                    ],
-                    steps: [
-                        {
-                            stepNumber: 1,
-                            instruction: 'Seduh teh celup dengan air panas selama 3-5 menit hingga warna teh keluar sempurna.'
-                        },
-                        {
-                            stepNumber: 2,
-                            instruction: 'Tambahkan gula pasir ke dalam teh panas, aduk hingga gula larut sempurna.'
-                        },
-                        {
-                            stepNumber: 3,
-                            instruction: 'Biarkan teh dingin hingga mencapai suhu ruangan, atau masukkan ke kulkas sebentar.'
-                        },
-                        {
-                            stepNumber: 4,
-                            instruction: 'Siapkan gelas saji, masukkan es batu secukupnya ke dalam gelas.'
-                        },
-                        {
-                            stepNumber: 5,
-                            instruction: 'Tuang teh manis ke dalam gelas berisi es batu. Tambahkan daun mint sebagai garnish jika diinginkan.'
-                        }
-                    ]
-                },
-                {
-                    id: '3',
-                    title: 'Kue Brownies Coklat',
-                    description: 'Brownies coklat yang lembut dan legit dengan tekstur yang sempurna untuk dessert',
-                    category: 'Cemilan',
-                    difficulty: 'Sulit',
-                    duration: 60,
-                    servings: 8,
-                    rating: 4.8,
-                    viewCount: 2150,
-                    favoriteCount: 156,
-                    imageUrl: 'https://images.unsplash.com/photo-1606313564200-e75d5e30476c?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1000&q=80',
-                    createdAt: '2024-01-05T09:15:00Z',
-                    isActive: true,
-                    ingredients: [
-                        '200g dark chocolate, cincang',
-                        '100g butter',
-                        '150g gula pasir',
-                        '3 butir telur',
-                        '100g tepung terigu',
-                        '30g coklat bubuk',
-                        '1/2 sdt vanilla extract',
-                        '1/4 sdt garam',
-                        '100g kacang walnut, cincang (opsional)'
-                    ],
-                    steps: [
-                        {
-                            stepNumber: 1,
-                            instruction: 'Panaskan oven hingga 180°C. Olesi loyang 20x20 cm dengan butter dan taburi tepung.'
-                        },
-                        {
-                            stepNumber: 2,
-                            instruction: 'Lelehkan dark chocolate dan butter dengan double boiler hingga meleleh sempurna, aduk rata.'
-                        },
-                        {
-                            stepNumber: 3,
-                            instruction: 'Dalam mangkuk terpisah, kocok telur dan gula hingga mengembang dan berwarna pucat.'
-                        },
-                        {
-                            stepNumber: 4,
-                            instruction: 'Masukkan campuran coklat leleh ke dalam kocokan telur, aduk rata dengan spatula.'
-                        },
-                        {
-                            stepNumber: 5,
-                            instruction: 'Ayak tepung terigu dan coklat bubuk, masukkan ke dalam adonan bersama garam dan vanilla extract.'
-                        },
-                        {
-                            stepNumber: 6,
-                            instruction: 'Aduk adonan hingga rata, jangan overmix. Tambahkan kacang walnut jika digunakan.'
-                        },
-                        {
-                            stepNumber: 7,
-                            instruction: 'Tuang adonan ke loyang, ratakan permukaan. Panggang selama 25-30 menit hingga permukaan set.'
-                        },
-                        {
-                            stepNumber: 8,
-                            instruction: 'Dinginkan brownies sepenuhnya sebelum dipotong. Potong sesuai selera dan sajikan.'
-                        }
-                    ]
-                }
-            ]
-        };
-    },
-
-    toggleFavoriteRecipe: async (recipeId, isAddingFavorite) => {
-        // Simulasi API call
-        await new Promise(resolve => setTimeout(resolve, 500));
-        return {
-            success: true,
-            data: { recipeId, isAddingFavorite }
-        };
-    },
-
-    incrementViewCount: async (recipeId) => {
-        // Simulasi API call
-        await new Promise(resolve => setTimeout(resolve, 200));
-        return {
-            success: true,
-            data: { recipeId }
-        };
-    }
-};
-
-const RecipePage = () => {
+const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);
     const [viewMode, setViewMode] = useState('grid');
     const [searchTerm, setSearchTerm] = useState('');
     const [selectedCategory, setSelectedCategory] = useState('Semua');
-    const [favorites, setFavorites] = useState(new Set());
     const [recipes, setRecipes] = useState([]);
+    const [likedRecipes, setLikedRecipes] = useState(new Set());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
-    const categories = ['Semua', 'Cemilan', 'Makanan Utama', 'Minuman'];
+    const categories = ['Semua', 'Makanan Utama', 'Cemilan', 'Minuman', 'Makanan Sehat', 'Dessert', 'Lainnya'];
 
-    // Load recipes from Firebase
+    // Load recipes from Firebase with like status
     useEffect(() => {
-        loadRecipes();
-    }, []);
+        console.log('ini cure', currentUserId)
+        if (currentUserId) {
+            loadRecipesWithLikeStatus();
+        } else {
+            loadRecipes();
+        }
+    }, [currentUserId]);
+
+    const loadRecipesWithLikeStatus = async () => {
+        try {
+            setLoading(true);
+            setError(null);
+            const result = await getAllRecipesWithLikeStatus(currentUserId, isSeller);
+            if (result.success) {
+                setRecipes(result.data);
+                // Update liked recipes set - pastikan sinkronisasi
+                const liked = new Set(
+                    result.data.filter(recipe => recipe.isLiked).map(recipe => recipe.id)
+                );
+                setLikedRecipes(liked);
+            } else {
+                setError(result.error || 'Gagal memuat resep');
+            }
+        } catch (err) {
+            setError('Terjadi kesalahan saat memuat resep');
+            console.error('Error loading recipes:', err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const loadRecipes = async () => {
         try {
             setLoading(true);
             setError(null);
-
-            const result = await mockFirebaseServices.getAllRecipes();
+            console.log(isSeller)
+            // Tentukan fungsi yang dipanggil berdasarkan peran pengguna
+            const result = isSeller
+                ? await getRecipesBySeller(currentUserId)
+                : await getAllRecipes();
 
             if (result.success) {
-                setRecipes(result.data);
+                const recipesWithLikeStatus = result.data.map(recipe => ({
+                    ...recipe,
+                    isLiked: false
+                }));
+
+                setRecipes(recipesWithLikeStatus);
+                setLikedRecipes(new Set()); // Kosongkan liked recipes
             } else {
                 setError(result.error || 'Gagal memuat resep');
             }
@@ -252,75 +110,134 @@ const RecipePage = () => {
     });
 
     const toggleFavorite = async (recipeId) => {
-        const isCurrentlyFavorite = favorites.has(recipeId);
-        const isAddingFavorite = !isCurrentlyFavorite;
+        if (!currentUserId) {
+            setError('Silakan login untuk menambahkan ke favorit');
+            return;
+        }
 
+        const isCurrentlyLiked = likedRecipes.has(recipeId);
         try {
             // Update local state optimistically
-            setFavorites(prev => {
-                const newFavorites = new Set(prev);
-                if (isCurrentlyFavorite) {
-                    newFavorites.delete(recipeId);
+            setLikedRecipes(prev => {
+                const newLikedRecipes = new Set(prev);
+                if (isCurrentlyLiked) {
+                    newLikedRecipes.delete(recipeId);
                 } else {
-                    newFavorites.add(recipeId);
+                    newLikedRecipes.add(recipeId);
                 }
-                return newFavorites;
+                return newLikedRecipes;
             });
 
-            // Update favorite count in Firebase
-            const result = await mockFirebaseServices.toggleFavoriteRecipe(recipeId, isAddingFavorite);
+            // Update recipes state optimistically
+            setRecipes(prev => prev.map(recipe =>
+                recipe.id === recipeId
+                    ? {
+                        ...recipe,
+                        isLiked: !isCurrentlyLiked,
+                        favoriteCount: isCurrentlyLiked
+                            ? Math.max(0, recipe.favoriteCount - 1)
+                            : recipe.favoriteCount + 1
+                    }
+                    : recipe
+            ));
+
+            // Update selected recipe if it's currently viewed
+            if (selectedRecipe && selectedRecipe.id === recipeId) {
+                setSelectedRecipe(prev => ({
+                    ...prev,
+                    isLiked: !isCurrentlyLiked,
+                    favoriteCount: isCurrentlyLiked
+                        ? Math.max(0, prev.favoriteCount - 1)
+                        : prev.favoriteCount + 1
+                }));
+            }
+
+            // Update Firebase
+            const result = await toggleFavoriteRecipe(recipeId, currentUserId);
 
             if (result.success) {
-                // Update local recipe data
+                setError(null);
+            } else {
+                // Revert optimistic updates jika gagal
+                setLikedRecipes(prev => {
+                    const newLikedRecipes = new Set(prev);
+                    if (isCurrentlyLiked) {
+                        newLikedRecipes.add(recipeId);
+                    } else {
+                        newLikedRecipes.delete(recipeId);
+                    }
+                    return newLikedRecipes;
+                });
+
                 setRecipes(prev => prev.map(recipe =>
                     recipe.id === recipeId
-                        ? { ...recipe, favoriteCount: recipe.favoriteCount + (isAddingFavorite ? 1 : -1) }
+                        ? {
+                            ...recipe,
+                            isLiked: isCurrentlyLiked,
+                            favoriteCount: isCurrentlyLiked
+                                ? recipe.favoriteCount + 1
+                                : Math.max(0, recipe.favoriteCount - 1)
+                        }
                         : recipe
                 ));
 
-                // Update selected recipe if it's currently viewed
                 if (selectedRecipe && selectedRecipe.id === recipeId) {
                     setSelectedRecipe(prev => ({
                         ...prev,
-                        favoriteCount: prev.favoriteCount + (isAddingFavorite ? 1 : -1)
+                        isLiked: isCurrentlyLiked,
+                        favoriteCount: isCurrentlyLiked
+                            ? prev.favoriteCount + 1
+                            : Math.max(0, prev.favoriteCount - 1)
                     }));
                 }
-            } else {
-                // Revert local state if Firebase update failed
-                setFavorites(prev => {
-                    const newFavorites = new Set(prev);
-                    if (isAddingFavorite) {
-                        newFavorites.delete(recipeId);
-                    } else {
-                        newFavorites.add(recipeId);
-                    }
-                    return newFavorites;
-                });
+
                 setError(result.error || 'Gagal memperbarui favorit');
             }
         } catch (err) {
             console.error('Error toggling favorite:', err);
             setError('Terjadi kesalahan saat memperbarui favorit');
 
-            // Revert local state
-            setFavorites(prev => {
-                const newFavorites = new Set(prev);
-                if (isAddingFavorite) {
-                    newFavorites.delete(recipeId);
+            // Revert optimistic updates
+            setLikedRecipes(prev => {
+                const newLikedRecipes = new Set(prev);
+                if (isCurrentlyLiked) {
+                    newLikedRecipes.add(recipeId);
                 } else {
-                    newFavorites.add(recipeId);
+                    newLikedRecipes.delete(recipeId);
                 }
-                return newFavorites;
+                return newLikedRecipes;
             });
+
+            setRecipes(prev => prev.map(recipe =>
+                recipe.id === recipeId
+                    ? {
+                        ...recipe,
+                        isLiked: isCurrentlyLiked,
+                        favoriteCount: isCurrentlyLiked
+                            ? recipe.favoriteCount + 1
+                            : Math.max(0, recipe.favoriteCount - 1)
+                    }
+                    : recipe
+            ));
+
+            if (selectedRecipe && selectedRecipe.id === recipeId) {
+                setSelectedRecipe(prev => ({
+                    ...prev,
+                    isLiked: isCurrentlyLiked,
+                    favoriteCount: isCurrentlyLiked
+                        ? prev.favoriteCount + 1
+                        : Math.max(0, prev.favoriteCount - 1)
+                }));
+            }
         }
     };
 
     const handleRecipeClick = async (recipe) => {
         setSelectedRecipe(recipe);
-
+        if (isSeller) return;
         // Increment view count
         try {
-            const result = await mockFirebaseServices.incrementViewCount(recipe.id);
+            const result = await incrementViewCount(recipe.id);
             if (result.success) {
                 // Update local recipe data
                 setRecipes(prev => prev.map(r =>
@@ -328,6 +245,11 @@ const RecipePage = () => {
                         ? { ...r, viewCount: r.viewCount + 1 }
                         : r
                 ));
+                // Update selected recipe view count
+                setSelectedRecipe(prev => ({
+                    ...prev,
+                    viewCount: prev.viewCount + 1
+                }));
             }
         } catch (err) {
             console.error('Error incrementing view count:', err);
@@ -351,6 +273,11 @@ const RecipePage = () => {
         });
     };
 
+    // Helper function untuk mengecek apakah recipe sudah di-like
+    const isRecipeLiked = (recipeId) => {
+        return likedRecipes.has(recipeId);
+    };
+
     // Show loading state
     if (loading) {
         return (
@@ -372,7 +299,7 @@ const RecipePage = () => {
                         {error}
                     </div>
                     <button
-                        onClick={loadRecipes}
+                        onClick={currentUserId ? loadRecipesWithLikeStatus : loadRecipes}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                     >
                         Coba Lagi
@@ -401,21 +328,29 @@ const RecipePage = () => {
                                 <h1 className="text-xl font-semibold text-gray-900">Detail Resep</h1>
                             </div>
                             <div className="flex items-center space-x-3">
-                                <button
-                                    onClick={() => toggleFavorite(selectedRecipe.id)}
-                                    className={`p-2 rounded-full transition-colors ${favorites.has(selectedRecipe.id)
-                                        ? 'bg-red-100 text-red-600 hover:bg-red-200'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                        }`}
-                                >
-                                    <Heart className={`h-5 w-5 ${favorites.has(selectedRecipe.id) ? 'fill-current' : ''}`} />
-                                </button>
-                                <button className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors">
+                                {!isSeller &&
+                                    <button
+                                        onClick={() => toggleFavorite(selectedRecipe.id)}
+                                        className={`p-2 rounded-full transition-colors ${isRecipeLiked(selectedRecipe.id)
+                                            ? 'bg-red-100 text-red-600 hover:bg-red-200'
+                                            : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                            }`}
+                                        disabled={!currentUserId}
+                                        title={!currentUserId ? 'Login untuk menambahkan ke favorit' : ''}
+                                    >
+                                        <Heart className={`h-5 w-5 ${isRecipeLiked(selectedRecipe.id) ? 'fill-current' : ''}`} />
+                                    </button>}
+                                {currentUserId && (
+                                    <button
+                                        onClick={() => onEditRecipe(selectedRecipe)}
+                                        className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors"
+                                    >
+                                        <Pencil className="h-5 w-5" />
+                                    </button>
+                                )}
+                                {!isSeller && <button className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors">
                                     <Bookmark className="h-5 w-5" />
-                                </button>
-                                <button className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors">
-                                    <Share2 className="h-5 w-5" />
-                                </button>
+                                </button>}
                             </div>
                         </div>
                     </div>
@@ -442,7 +377,6 @@ const RecipePage = () => {
                                 <div className="p-6">
                                     <h1 className="text-2xl font-bold text-gray-900 mb-2">{selectedRecipe.title}</h1>
                                     <p className="text-gray-600 mb-4">{selectedRecipe.description}</p>
-
                                     <div className="grid grid-cols-2 gap-4 mb-6">
                                         <div className="flex items-center space-x-2">
                                             <Clock className="h-5 w-5 text-gray-400" />
@@ -453,15 +387,10 @@ const RecipePage = () => {
                                             <span className="text-sm text-gray-600">{selectedRecipe.servings} porsi</span>
                                         </div>
                                         <div className="flex items-center space-x-2">
-                                            <Star className="h-5 w-5 text-yellow-400 fill-current" />
-                                            <span className="text-sm text-gray-600">{selectedRecipe.rating}</span>
-                                        </div>
-                                        <div className="flex items-center space-x-2">
                                             <Eye className="h-5 w-5 text-gray-400" />
                                             <span className="text-sm text-gray-600">{selectedRecipe.viewCount.toLocaleString()}</span>
                                         </div>
                                     </div>
-
                                     <div className="flex items-center justify-between text-sm text-gray-500">
                                         <span>Dibuat: {formatDate(selectedRecipe.createdAt)}</span>
                                         <span className="flex items-center space-x-1">
@@ -526,6 +455,13 @@ const RecipePage = () => {
                             <h1 className="text-2xl font-bold text-gray-900">Resep</h1>
                         </div>
                         <div className="flex items-center space-x-3">
+                            <button
+                                onClick={onAddRecipe}
+                                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            >
+                                <Plus className="h-4 w-4" />
+                                <span>Tambah Resep</span>
+                            </button>
                             <div className="flex bg-gray-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
@@ -609,18 +545,19 @@ const RecipePage = () => {
                                                     {recipe.difficulty}
                                                 </span>
                                             </div>
-                                            <button
+                                            {!isSeller && <button
                                                 onClick={(e) => {
                                                     e.stopPropagation();
                                                     toggleFavorite(recipe.id);
                                                 }}
-                                                className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${favorites.has(recipe.id)
+                                                className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${isRecipeLiked(recipe.id)
                                                     ? 'bg-red-100 text-red-600'
                                                     : 'bg-white/80 text-gray-600 hover:bg-white'
                                                     }`}
+                                                disabled={!currentUserId}
                                             >
-                                                <Heart className={`h-4 w-4 ${favorites.has(recipe.id) ? 'fill-current' : ''}`} />
-                                            </button>
+                                                <Heart className={`h-4 w-4 ${isRecipeLiked(recipe.id) ? 'fill-current' : ''}`} />
+                                            </button>}
                                         </div>
                                         <div className="p-4">
                                             <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{recipe.title}</h3>
@@ -636,10 +573,7 @@ const RecipePage = () => {
                                                         <span>{recipe.servings}</span>
                                                     </div>
                                                 </div>
-                                                <div className="flex items-center space-x-1">
-                                                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                                    <span>{recipe.rating}</span>
-                                                </div>
+
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs text-gray-500">{recipe.category}</span>
@@ -677,10 +611,7 @@ const RecipePage = () => {
                                                     <Users className="h-4 w-4" />
                                                     <span>{recipe.servings}</span>
                                                 </div>
-                                                <div className="flex items-center space-x-1">
-                                                    <Star className="h-4 w-4 text-yellow-400 fill-current" />
-                                                    <span>{recipe.rating}</span>
-                                                </div>
+
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(recipe.difficulty)}`}>
@@ -691,12 +622,12 @@ const RecipePage = () => {
                                                         e.stopPropagation();
                                                         toggleFavorite(recipe.id);
                                                     }}
-                                                    className={`p-1 rounded-full transition-colors ${favorites.has(recipe.id)
+                                                    className={`p-1 rounded-full transition-colors ${likedRecipes.has(recipe.id)
                                                         ? 'text-red-600'
                                                         : 'text-gray-400 hover:text-red-600'
                                                         }`}
                                                 >
-                                                    <Heart className={`h-4 w-4 ${favorites.has(recipe.id) ? 'fill-current' : ''}`} />
+                                                    <Heart className={`h-4 w-4 ${likedRecipes.has(recipe.id) ? 'fill-current' : ''}`} />
                                                 </button>
                                             </div>
                                         </div>

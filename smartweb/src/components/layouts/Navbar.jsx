@@ -81,7 +81,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                 {/* Enhanced Search Bar & Icons */}
                 <div className="flex items-center space-x-4">
                     {/* Enhanced Search Bar */}
-                    <form onSubmit={handleSearch} className="relative">
+                    {!userData?.seller && <form onSubmit={handleSearch} className="relative">
                         <div className={`relative transition-all duration-200 ${isSearchFocused ? 'scale-105' : ''}`}>
                             <button
                                 type="button"
@@ -105,7 +105,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen }) => {
                                 className="pl-10 pr-4 py-2.5 w-80 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/70 backdrop-blur-sm shadow-sm hover:shadow-md transition-all duration-200"
                             />
                         </div>
-                    </form>
+                    </form>}
 
                     {/* Enhanced Avatar Dropdown */}
                     <div className="relative">
