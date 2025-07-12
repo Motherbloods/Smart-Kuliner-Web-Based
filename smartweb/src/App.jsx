@@ -94,7 +94,7 @@ export function App() {
           <Route
             path="/product-search"
             element={
-              <ProtectedRoute>
+              <ProtectedRoute allowedRoles={['buyer']}>
                 <ProductSearchPage />
               </ProtectedRoute>
             }
