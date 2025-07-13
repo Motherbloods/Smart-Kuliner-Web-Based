@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { ArrowLeft, Upload, X, Save, Loader2, Trash2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import productService from '../services/ProductServices';
+import { categoryList } from '../utils/categories';
 
 const EditProduct = ({ productId, onBack, onSuccess, onDelete }) => {
     const { userData } = useAuth();
@@ -19,15 +20,6 @@ const EditProduct = ({ productId, onBack, onSuccess, onDelete }) => {
     });
     const [newImageFiles, setNewImageFiles] = useState([]);
     const [errors, setErrors] = useState({});
-
-    const categories = [
-        'Makanan Utama',
-        'Cemilan',
-        'Minuman',
-        'Makanan Sehat',
-        'Dessert',
-        'Lainnya',
-    ];
 
     useEffect(() => {
         const fetchData = async () => {
@@ -315,7 +307,7 @@ const EditProduct = ({ productId, onBack, onSuccess, onDelete }) => {
                                     }`}
                             >
                                 <option value="">Pilih kategori</option>
-                                {categories.map(cat => (
+                                {categoryList.map(cat => (
                                     <option key={cat} value={cat}>{cat}</option>
                                 ))}
                             </select>

@@ -12,6 +12,7 @@ import {
 import { createRecipe } from '../services/RecipeServices';
 import { useAuth } from '../hooks/useAuth';
 import { imageUploadService } from '../services/CloudinaryService';
+import { categoryList } from '../utils/categories';
 const AddRecipe = ({ onBack, onSuccess }) => {
     const { userData } = useAuth();
 
@@ -33,7 +34,6 @@ const AddRecipe = ({ onBack, onSuccess }) => {
         steps: [{ stepNumber: 1, instruction: '' }],
     });
 
-    const categories = ['Makanan Utama', 'Cemilan', 'Minuman', 'Makanan Sehat', 'Dessert', 'Lainnya'];
     const difficulties = ['Mudah', 'Sedang', 'Sulit'];
 
     const handleInputChange = (field, value) => {
@@ -272,7 +272,7 @@ const AddRecipe = ({ onBack, onSuccess }) => {
                                     onChange={(e) => handleInputChange('category', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    {categories.map(category => (
+                                    {categoryList.map(category => (
                                         <option key={category} value={category}>{category}</option>
                                     ))}
                                 </select>

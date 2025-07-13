@@ -10,6 +10,7 @@ import {
     X
 } from 'lucide-react';
 import { getRecipeById, updateRecipe } from '../services/RecipeServices';
+import { categoryList } from '../utils/categories';
 
 const EditRecipe = ({ recipeId, onBack, onSuccess, }) => {
     const [loading, setLoading] = useState(false);
@@ -33,7 +34,6 @@ const EditRecipe = ({ recipeId, onBack, onSuccess, }) => {
     const [imageFile, setImageFile] = useState(null);
     const [imagePreview, setImagePreview] = useState('');
 
-    const categories = ['Cemilan', 'Makanan Utama', 'Minuman'];
     const difficulties = ['Mudah', 'Sedang', 'Sulit'];
 
     // Load recipe data for edit mode
@@ -307,7 +307,7 @@ const EditRecipe = ({ recipeId, onBack, onSuccess, }) => {
                                     onChange={(e) => handleInputChange('category', e.target.value)}
                                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 >
-                                    {categories.map(category => (
+                                    {categoryList.map(category => (
                                         <option key={category} value={category}>{category}</option>
                                     ))}
                                 </select>

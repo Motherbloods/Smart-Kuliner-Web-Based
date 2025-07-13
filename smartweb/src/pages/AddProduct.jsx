@@ -3,6 +3,7 @@ import { ArrowLeft, Upload, X, Save, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import productService from '../services/ProductServices';
 import { imageUploadService } from '../services/CloudinaryService';
+import { categoryList } from '../utils/categories';
 
 const AddProduct = ({ onBack, onSuccess }) => {
     const { userData } = useAuth();
@@ -18,15 +19,6 @@ const AddProduct = ({ onBack, onSuccess }) => {
     });
     const [imageFiles, setImageFiles] = useState([]);
     const [errors, setErrors] = useState({});
-
-    const categories = [
-        'Makanan Utama',
-        'Cemilan',
-        'Minuman',
-        'Makanan Sehat',
-        'Dessert',
-        'Lainnya',
-    ];
 
     useEffect(() => {
         const fetchSellerData = async () => {
@@ -238,7 +230,7 @@ const AddProduct = ({ onBack, onSuccess }) => {
                                 }`}
                         >
                             <option value="">Pilih kategori</option>
-                            {categories.map(cat => (
+                            {categoryList.map(cat => (
                                 <option key={cat} value={cat}>{cat}</option>
                             ))}
                         </select>

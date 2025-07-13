@@ -7,6 +7,7 @@ import {
 import { useNavigate } from 'react-router-dom';
 import MainKontenService from '../services/MainKontenService';
 import { capitalizeWord } from '../utils/formatHelpers';
+import { categoryOptions } from '../utils/categories';
 
 const EditKonten = ({ kontenId, onBack, onSuccess, onDelete }) => {
     const navigate = useNavigate();
@@ -32,17 +33,6 @@ const EditKonten = ({ kontenId, onBack, onSuccess, onDelete }) => {
     const [success, setSuccess] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleting, setDeleting] = useState(false);
-
-    // Category options
-    const categories = [
-        { value: 'makanan utama', label: 'Makanan Utama' },
-        { value: 'cemilan', label: 'Cemilan' },
-        { value: 'makanan sehat', label: 'Makanan Sehat' },
-        { value: 'dessert', label: 'Dessert' },
-        { value: 'minuman', label: 'Minuman' },
-        { value: 'promo special', label: 'Promo Special' },
-        { value: 'lainnya', label: 'Lainnya' }
-    ];
 
     // Load existing konten data
     useEffect(() => {
@@ -349,7 +339,7 @@ const EditKonten = ({ kontenId, onBack, onSuccess, onDelete }) => {
                                     required
                                 >
                                     <option value="">Pilih Kategori</option>
-                                    {categories.map(cat => (
+                                    {categoryOptions.map(cat => (
                                         <option key={cat.value} value={cat.value}>
                                             {cat.label}
                                         </option>

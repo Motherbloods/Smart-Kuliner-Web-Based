@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { MainKontenService } from '../services/Index.js';
+import { categoryOptions } from '../utils/categories.js';
 
 const AddEdukasi = ({ onBack, onSuccess }) => {
     const { userData } = useAuth();
@@ -32,17 +33,6 @@ const AddEdukasi = ({ onBack, onSuccess }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const [success, setSuccess] = useState(false);
-
-    // Category options
-    const categories = [
-        { value: 'makanan utama', label: 'Makanan Utama' },
-        { value: 'cemilan', label: 'Cemilan' },
-        { value: 'makanan sehat', label: 'Makanan Sehat' },
-        { value: 'dessert', label: 'Dessert' },
-        { value: 'minuman', label: 'Minuman' },
-        { value: 'tips masak', label: 'Tips Masak' },
-        { value: 'lainnya', label: 'Lainnya' }
-    ];
 
     // Handle input change
     const handleInputChange = (e) => {
@@ -278,7 +268,7 @@ const AddEdukasi = ({ onBack, onSuccess }) => {
                                     required
                                 >
                                     <option value="">Pilih Kategori</option>
-                                    {categories.map(cat => (
+                                    {categoryOptions.map(cat => (
                                         <option key={cat.value} value={cat.value}>
                                             {cat.label}
                                         </option>

@@ -6,6 +6,7 @@ import {
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { MainKontenService } from '../services/Index.js';
+import { categoryOptions } from '../utils/categories.js';
 
 const EditEdukasi = ({ edukasiId, onBack, onSuccess, onDelete }) => {
     const { userData } = useAuth();
@@ -42,18 +43,6 @@ const EditEdukasi = ({ edukasiId, onBack, onSuccess, onDelete }) => {
     const [success, setSuccess] = useState(false);
     const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
     const [deleteLoading, setDeleteLoading] = useState(false);
-
-    // Category options
-    const categories = [
-        { value: 'makanan utama', label: 'Makanan Utama' },
-        { value: 'cemilan', label: 'Cemilan' },
-        { value: 'makanan sehat', label: 'Makanan Sehat' },
-        { value: 'dessert', label: 'Dessert' },
-        { value: 'minuman', label: 'Minuman' },
-        { value: 'tips masak', label: 'Tips Masak' },
-        { value: 'lainnya', label: 'Lainnya' }
-    ];
-    console.log(edukasiId)
     // Fetch edukasi data
     useEffect(() => {
         const fetchEdukasiData = async () => {
@@ -442,7 +431,7 @@ const EditEdukasi = ({ edukasiId, onBack, onSuccess, onDelete }) => {
                                     required
                                 >
                                     <option value="">Pilih Kategori</option>
-                                    {categories.map(cat => (
+                                    {categoryOptions.map(cat => (
                                         <option key={cat.value} value={cat.value}>
                                             {cat.label}
                                         </option>

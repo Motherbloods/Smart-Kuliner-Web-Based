@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ChefHat, UserPlus, Store, MapPin, Calendar, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { authService } from '../services/AuthServices';
+import { foodCategories, provinces } from '../utils/categories';
 
 export function RegisterPage() {
     const navigate = useNavigate()
@@ -29,24 +30,6 @@ export function RegisterPage() {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [passwordStrength, setPasswordStrength] = useState(0);
-
-    // Indonesian provinces
-    const provinces = [
-        'Aceh', 'Sumatera Utara', 'Sumatera Barat', 'Riau', 'Kepulauan Riau', 'Jambi', 'Sumatera Selatan',
-        'Kepulauan Bangka Belitung', 'Bengkulu', 'Lampung', 'DKI Jakarta', 'Jawa Barat', 'Jawa Tengah',
-        'DI Yogyakarta', 'Jawa Timur', 'Banten', 'Bali', 'Nusa Tenggara Barat', 'Nusa Tenggara Timur',
-        'Kalimantan Barat', 'Kalimantan Tengah', 'Kalimantan Selatan', 'Kalimantan Timur', 'Kalimantan Utara',
-        'Sulawesi Utara', 'Sulawesi Tengah', 'Sulawesi Selatan', 'Sulawesi Tenggara', 'Gorontalo',
-        'Sulawesi Barat', 'Maluku', 'Maluku Utara', 'Papua', 'Papua Barat', 'Papua Selatan', 'Papua Tengah',
-        'Papua Pegunungan', 'Papua Barat Daya'
-    ];
-
-    // Food categories
-    const foodCategories = [
-        'Makanan Modern', 'Minuman', 'Fast Food', 'Street Food', 'Makanan Tradisional', 'Seafood',
-        'Vegetarian', 'Dessert', 'Bakery', 'Chinese Food', 'Japanese Food', 'Western Food', 'Italian Food',
-        'Indian Food', 'Thai Food', 'Korean Food', 'Middle Eastern', 'Halal Food', 'Organic Food', 'Healthy Food'
-    ];
 
     const handleChange = (e) => {
         const { name, type, value, checked } = e.target;

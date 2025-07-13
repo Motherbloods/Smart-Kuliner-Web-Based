@@ -22,10 +22,10 @@ import {
     getAllRecipesWithLikeStatus,
     incrementViewCount,
     toggleFavoriteRecipe,
-    getUserLikedRecipes,
     getAllRecipes,
     getRecipesBySeller
 } from '../services/RecipeServices';
+import { categoryLabelList } from '../utils/categories';
 
 const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
     const [selectedRecipe, setSelectedRecipe] = useState(null);
@@ -36,8 +36,6 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
     const [likedRecipes, setLikedRecipes] = useState(new Set());
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-
-    const categories = ['Semua', 'Makanan Utama', 'Cemilan', 'Minuman', 'Makanan Sehat', 'Dessert', 'Lainnya'];
 
     // Load recipes from Firebase with like status
     useEffect(() => {
@@ -501,7 +499,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                 onChange={(e) => setSelectedCategory(e.target.value)}
                                 className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             >
-                                {categories.map(category => (
+                                {categoryLabelList.map(category => (
                                     <option key={category} value={category}>{category}</option>
                                 ))}
                             </select>

@@ -10,6 +10,7 @@ import VideoPopup from '../components/VideoPopup.jsx';
 import VideoCard from '../components/VideoCard.jsx';
 import LoadingCard from '../components/shared/LoadingCard.jsx';
 import ErrorDisplay from '../components/shared/ErrorDisplay.jsx';
+import { categoryFilterOptions } from '../utils/categories.js';
 
 const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSeller }) => {
     // State Management
@@ -29,16 +30,6 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
         status: 'Published',
         sortBy: 'latest'
     });
-
-    // Available categories and sort options
-    const categories = [
-        { value: '', label: 'Semua Kategori' },
-        { value: 'makanan utama', label: 'Makanan Utama' },
-        { value: 'cemilan', label: 'Cemilan' },
-        { value: 'makanan sehat', label: 'Makanan Sehat' },
-        { value: 'dessert', label: 'Dessert' },
-        { value: 'lainnya', label: 'Lainnya' }
-    ];
 
     const sortOptions = [
         { value: 'latest', label: 'Terbaru' },
@@ -487,7 +478,7 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
                                         onChange={(e) => handleFilterChange('category', e.target.value)}
                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
                                     >
-                                        {categories.map(cat => (
+                                        {categoryFilterOptions.map(cat => (
                                             <option key={cat.value} value={cat.value}>
                                                 {cat.label}
                                             </option>
