@@ -100,7 +100,6 @@ export function RegisterSellerPage() {
         try {
             const response = await registerSeller(formData);
             console.log('Seller registration successful:', response);
-            alert(`Registrasi berhasil! Selamat datang di SMARTKULINER, ${formData.store_name}!`);
         } catch (error) {
             setError(error.message || 'Registrasi gagal');
         } finally {
@@ -155,15 +154,18 @@ export function RegisterSellerPage() {
                     <div className="bg-gradient-to-r from-blue-500 to-indigo-500 p-3 rounded-xl shadow-lg mr-3">
                         <ChefHat className="h-8 w-8 text-white" />
                     </div>
-                    <h1 className="text-4xl font-bold tracking-wide bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
+                    <h1 className="text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold tracking-wide bg-gradient-to-r from-blue-600 via-indigo-500 to-purple-500 bg-clip-text text-transparent">
                         SMARTKULINER
                     </h1>
+
                 </div>
 
                 {/* Welcome Text */}
-                <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Daftar Sebagai Seller</h2>
-                    <p className="text-gray-600 mb-4">
+                <div className="text-center mb-8 px-4 sm:px-0">
+                    <h2 className="text-xl sm:text-2xl font-extrabold text-gray-900 mb-2">
+                        Daftar Sebagai Seller
+                    </h2>
+                    <p className="text-gray-600 mb-4 text-sm sm:text-base">
                         Mulai berjualan dan kembangkan bisnis Anda bersama kami
                     </p>
 
@@ -190,11 +192,12 @@ export function RegisterSellerPage() {
                         </p>
                     </div>
                 </div>
+
             </div>
 
             {/* Registration Form */}
-            <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-2xl">
-                <div className="bg-white/80 backdrop-blur-sm py-8 px-6 shadow-2xl border border-white/20 sm:rounded-2xl sm:px-10 transform hover:shadow-3xl transition-all duration-300">
+            <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8">
+                <div className="bg-white/80 backdrop-blur-sm py-8 px-4 sm:px-6 shadow-2xl border border-white/20 sm:rounded-2xl transform hover:shadow-3xl transition-all duration-300">
                     {/* Error Message */}
                     {error && (
                         <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center space-x-2 animate-shake">
@@ -476,7 +479,7 @@ export function RegisterSellerPage() {
                                     <label className="block text-sm font-medium text-gray-700 mb-2">
                                         Logo Toko
                                     </label>
-                                    <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-xl hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
+                                    <label className="flex flex-col items-center justify-center w-full h-32 sm:h-40 border-2 border-gray-300 border-dashed rounded-xl hover:bg-gray-50 transition-colors duration-200 cursor-pointer">
                                         {logoPreview ? (
                                             <img
                                                 src={logoPreview}
@@ -574,7 +577,7 @@ export function RegisterSellerPage() {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes shake {
                     0%, 100% { transform: translateX(0); }
                     25% { transform: translateX(-5px); }

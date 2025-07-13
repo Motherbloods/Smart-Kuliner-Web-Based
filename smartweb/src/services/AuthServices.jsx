@@ -206,7 +206,7 @@ export const authService = {
 
             await setDoc(doc(db, 'users', uid), userData);
 
-            // 4. Simpan ke 'sellers'
+            // 4. Simpan ke 'sellers' - PERBAIKAN: Hilangkan spread operator yang salah
             const sellerData = {
                 id: uid,
                 nameToko: formData.store_name,
@@ -223,8 +223,13 @@ export const authService = {
                 tokenFCM: null,
             };
 
+            // PERBAIKAN: Gunakan setDoc dengan benar
             await setDoc(doc(db, 'sellers', uid), sellerData);
 
+            // Tunggu sebentar untuk memastikan data tersimpan
+            await new Promise(resolve => setTimeout(resolve, 1000));
+
+            console.log('[SUCCESS] Seller berhasil didaftarkan:', uid);
             return { uid, email: formData.email };
         } catch (error) {
             console.error('[ERROR] Register Seller:', error);

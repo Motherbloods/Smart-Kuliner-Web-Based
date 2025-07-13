@@ -73,7 +73,7 @@ export function RegisterPage() {
         }
         return cleanPhone;
     };
-
+    console.log(formData.gender)
     const handleSubmit = async (e) => {
         e.preventDefault();
 
@@ -116,7 +116,7 @@ export function RegisterPage() {
                 createdAt: new Date().toISOString(),
                 lastLoginAt: new Date().toISOString()
             };
-
+            console.log(formData.gender)
             const response = await register(formData.email, formData.password, userData);
             console.log('Registration successful:', response);
             navigate('/');
@@ -552,20 +552,15 @@ export function RegisterPage() {
                 </div>
             </div>
 
-            <style jsx>{`
+            <style>{`
                 @keyframes shake {
                     0%, 100% { transform: translateX(0); }
                     25% { transform: translateX(-5px); }
                     75% { transform: translateX(5px); }
-                }
-                .animate-shake {
-                    animation: shake 0.5s ease-in-out;
                 }
 
-                @keyframes shake {
-                    0%, 100% { transform: translateX(0); }
-                    25% { transform: translateX(-5px); }
-                    75% { transform: translateX(5px); }
+                .animate-shake {
+                    animation: shake 0.5s ease-in-out;
                 }
 
                 @media (max-width: 640px) {
@@ -575,6 +570,7 @@ export function RegisterPage() {
                     }
                 }
             `}</style>
+
         </div>
     );
 }

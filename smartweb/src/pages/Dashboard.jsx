@@ -69,7 +69,7 @@ const Dashboard = () => {
                 completedOrders,
                 cancelledOrders,
                 totalRevenue,
-                ordersGrowth: Math.floor(Math.random() * 20), // dummy growth
+                ordersGrowth: Math.floor(Math.random() * 20),
                 revenueGrowth: Math.floor(Math.random() * 15)  // dummy growth
             });
             // Set recent orders (last 5 dari semua orders)

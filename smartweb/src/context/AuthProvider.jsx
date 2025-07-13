@@ -17,15 +17,22 @@ export const AuthProvider = ({ children }) => {
                     // Set loading true saat mulai fetch userData
                     dispatch({ type: 'SET_LOADING', payload: true });
 
-                    const userData = await authService.getUserData(user.uid);
-                    dispatch({ type: 'SET_USER_DATA', payload: userData });
-
-                    // Set loading false setelah userData berhasil dimuat
-                    dispatch({ type: 'SET_LOADING', payload: false });
+                    try {
+                        const userData = await authService.getUserData(user.uid);
+                        dispatch({ type: 'SET_USER_DATA', payload: userData });
+                        dispatch({ type: 'SET_LOADING', payload: false });
+                    } catch (error) {
+                        console.error('[ERROR] Gagal mengambil data user:', error);
+                        // Jika gagal mengambil data user, tetap set loading false
+                        // dan biarkan user tetap login (Firebase Auth berhasil)
+                        dispatch({ type: 'SET_LOADING', payload: false });
+                        dispatch({ type: 'SET_ERROR', payload: error.message });
+                    }
                 } else {
                     dispatch({ type: 'CLEAR_AUTH' });
                 }
             } catch (error) {
+                console.error('[ERROR] Auth state changed error:', error);
                 dispatch({ type: 'SET_ERROR', payload: error.message });
                 dispatch({ type: 'SET_LOADING', payload: false });
             }
@@ -50,8 +57,6 @@ export const AuthProvider = ({ children }) => {
     };
 
     const register = async (email, password, userData) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
-
         try {
             await authService.register(email, password, userData);
 
@@ -70,24 +75,29 @@ export const AuthProvider = ({ children }) => {
     };
 
     const registerSeller = async (formData) => {
-
         try {
-            await authService.registerSeller(formData);
+            const result = await authService.registerSeller(formData);
+            console.log('[DEBUG] Seller registration result:', result);
 
-            await new Promise(resolve => setTimeout(resolve, 500));
+            // Tunggu sebentar untuk memastikan data tersimpan
+            await new Promise(resolve => setTimeout(resolve, 2000));
 
+            // Login setelah registrasi berhasil
             const { user, userData } = await authService.login(formData.email, formData.password);
+            console.log('[DEBUG] Auto login after seller registration:', { user: user.uid, userData });
 
             dispatch({ type: 'SET_USER', payload: user });
             dispatch({ type: 'SET_USER_DATA', payload: userData });
+
+            return result;
         } catch (error) {
+            console.error('[ERROR] Register seller in provider:', error);
             dispatch({ type: 'SET_ERROR', payload: error.message });
             throw error;
         } finally {
             dispatch({ type: 'SET_LOADING', payload: false });
         }
     };
-
 
     const logout = async () => {
         try {
