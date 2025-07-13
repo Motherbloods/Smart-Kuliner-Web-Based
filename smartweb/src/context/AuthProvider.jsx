@@ -35,7 +35,6 @@ export const AuthProvider = ({ children }) => {
     }, []);
 
     const login = async (emailOrPhone, password) => {
-        dispatch({ type: 'SET_LOADING', payload: true });
         try {
             const { user, userData } = await authService.login(emailOrPhone, password);
             console.log('[DEBUG] userData after login:', userData);

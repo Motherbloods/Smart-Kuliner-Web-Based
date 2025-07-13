@@ -80,7 +80,12 @@ export const authService = {
             return { user, userData };
         } catch (error) {
             console.error('[ERROR] Login gagal:', error);
-            throw new Error(error.message || 'Login gagal');
+            // lempar kembali error as-is jika sudah Error
+            if (error instanceof Error) {
+                throw error;
+            } else {
+                throw new Error(String(error) || 'Login gagal');
+            }
         }
     },
 

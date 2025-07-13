@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, ChefHat } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
@@ -12,6 +12,15 @@ export default function LoginPage() {
     const [error, setError] = useState('');
     const { login } = useAuth();
 
+    useEffect(() => {
+        if (error) {
+            const timeout = setTimeout(() => {
+                setError('');
+            }, 2000); // hilang setelah 2 detik
+
+            return () => clearTimeout(timeout); // clear jika unmount
+        }
+    }, [error]);
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
@@ -22,14 +31,15 @@ export default function LoginPage() {
             // Simulate redirect
             navigate('/');
         } catch (error) {
-            setError(error.message || 'Login failed');
+            console.error('[LOGIN ERROR]', error);
+            setError(error?.message || String(error) || 'Login gagal');
         } finally {
             setLoading(false);
         }
     };
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex flex-col justify-center py-12 sm:px-6 lg:px-8 relative overflow-hidden">
+        <div className="min-h-screen bg-gradient-to-br from-orange-50 via-red-50 to-pink-50 flex flex-col justify-center py-8 px-4 sm:px-6 lg:px-8 relative overflow-hidden">
             {/* Animated Background Elements */}
             <div className="absolute inset-0 overflow-hidden">
                 <div className="absolute -top-40 -right-40 w-80 h-80 bg-gradient-to-br from-orange-200 to-red-200 rounded-full opacity-20 animate-pulse"></div>
@@ -37,21 +47,23 @@ export default function LoginPage() {
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-orange-100 to-red-100 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-md">
+            <div className="relative z-10 w-full max-w-sm mx-auto px-4 sm:px-0">
+
                 {/* Logo and Brand */}
                 <div className="flex items-center justify-center mb-8 transform hover:scale-105 transition-transform duration-300">
                     <div className="bg-gradient-to-r from-orange-500 to-red-500 p-3 rounded-xl shadow-lg mr-3">
                         <ChefHat className="h-8 w-8 text-white" />
                     </div>
-                    <h1 className="text-4xl font-bold tracking-wide bg-gradient-to-br from-[#E53935] to-[#4DA8DA] bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-wide bg-gradient-to-br from-[#E53935] to-[#4DA8DA] bg-clip-text text-transparent">
                         SMARTKULINER
                     </h1>
+
 
                 </div>
 
                 {/* Welcome Text */}
                 <div className="text-center mb-8">
-                    <h2 className="text-3xl font-extrabold text-gray-900 mb-2">Welcome Back!</h2>
+                    <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 mb-2">Welcome Back!</h2>
                     <p className="text-gray-600">
                         Sign in to your culinary journey
                     </p>
@@ -60,10 +72,10 @@ export default function LoginPage() {
 
             {/* Login Form */}
             <div className="relative z-10  sm:mx-auto sm:w-full sm:max-w-md">
-                <div className="bg-white/80 backdrop-blur-sm py-8 px-4 shadow-2xl border border-white/20 sm:rounded-2xl sm:px-10 transform hover:shadow-3xl transition-all duration-300">
+                <div className="bg-white/80 backdrop-blur-sm py-8 px-4 shadow-2xl sm:shadow-2xl border border-white/20 sm:rounded-2xl sm:px-10 transform hover:shadow-3xl transition-all duration-300">
                     {/* Error Message */}
                     {error && (
-                        <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center space-x-2 animate-shake">
+                        <div className="mb-4 sm:mb-6 p-3 sm:p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center space-x-2 animate-shake">
                             <div className="w-2 h-2 bg-red-500 rounded-full"></div>
                             <span className="text-sm font-medium">{error}</span>
                         </div>
