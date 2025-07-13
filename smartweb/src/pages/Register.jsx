@@ -1,11 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ChefHat, UserPlus, Store, MapPin, Calendar, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { authService } from '../services/AuthServices';
 import { foodCategories, provinces } from '../utils/categories';
+import { useAuth } from '../hooks/useAuth';
 
 export function RegisterPage() {
     const navigate = useNavigate()
+    const { register } = useAuth();
 
     const [formData, setFormData] = useState({
         first_name: '',
@@ -116,7 +117,7 @@ export function RegisterPage() {
                 lastLoginAt: new Date().toISOString()
             };
 
-            const response = await authService.register(formData.email, formData.password, userData);
+            const response = await register(formData.email, formData.password, userData);
             console.log('Registration successful:', response);
             navigate('/');
         } catch (error) {
@@ -163,13 +164,14 @@ export function RegisterPage() {
                 <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-gradient-to-br from-orange-100 to-red-100 rounded-full opacity-10 animate-pulse" style={{ animationDelay: '2s' }}></div>
             </div>
 
-            <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-2xl">
+            <div className="relative z-10 mx-auto w-full max-w-md sm:max-w-2xl px-4 sm:px-0">
+
                 {/* Logo and Brand */}
                 <div className="flex items-center justify-center mb-8 transform hover:scale-105 transition-transform duration-300">
                     <div className="bg-gradient-to-r from-orange-500 to-red-500 p-3 rounded-xl shadow-lg mr-3">
                         <ChefHat className="h-8 w-8 text-white" />
                     </div>
-                    <h1 className="text-4xl font-bold tracking-wide bg-gradient-to-r from-orange-600 via-red-500 to-pink-500 bg-clip-text text-transparent">
+                    <h1 className="text-2xl sm:text-4xl font-bold tracking-wide bg-gradient-to-r from-orange-600 via-red-500 to-pink-500 bg-clip-text text-transparent">
                         SMARTKULINER
                     </h1>
                 </div>
@@ -206,8 +208,9 @@ export function RegisterPage() {
             </div>
 
             {/* Registration Form */}
-            <div className="relative z-10 sm:mx-auto sm:w-full sm:max-w-2xl">
-                <div className="bg-white/80 backdrop-blur-sm py-8 px-6 shadow-2xl border border-white/20 sm:rounded-2xl sm:px-10 transform hover:shadow-3xl transition-all duration-300">
+            <div className="relative z-10 mx-auto w-full max-w-md sm:max-w-2xl px-4 sm:px-0">
+
+                <div className="bg-white/80 backdrop-blur-sm py-8 px-4 sm:px-10 shadow-2xl border border-white/20 rounded-2xl transition-all duration-300">
                     {/* Error Message */}
                     {error && (
                         <div className="mb-6 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl flex items-center space-x-2 animate-shake">
@@ -335,7 +338,7 @@ export function RegisterPage() {
                                     />
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
                                     <div className="relative">
                                         <input
                                             name="city"
@@ -522,19 +525,6 @@ export function RegisterPage() {
                                     </a>
                                 </label>
                             </div>
-
-                            <div className="flex items-center space-x-3">
-                                <input
-                                    name="remember"
-                                    type="checkbox"
-                                    checked={formData.remember}
-                                    onChange={handleChange}
-                                    className="h-4 w-4 text-orange-600 focus:ring-orange-500 border-gray-300 rounded"
-                                />
-                                <label className="text-sm text-gray-700">
-                                    Tetap masuk ke akun saya
-                                </label>
-                            </div>
                         </div>
 
                         {/* Register Button */}
@@ -570,6 +560,19 @@ export function RegisterPage() {
                 }
                 .animate-shake {
                     animation: shake 0.5s ease-in-out;
+                }
+
+                @keyframes shake {
+                    0%, 100% { transform: translateX(0); }
+                    25% { transform: translateX(-5px); }
+                    75% { transform: translateX(5px); }
+                }
+
+                @media (max-width: 640px) {
+                    .absolute.bg-gradient-to-br {
+                    width: 10rem !important;
+                    height: 10rem !important;
+                    }
                 }
             `}</style>
         </div>

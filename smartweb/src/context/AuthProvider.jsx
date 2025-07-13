@@ -51,8 +51,16 @@ export const AuthProvider = ({ children }) => {
 
     const register = async (email, password, userData) => {
         dispatch({ type: 'SET_LOADING', payload: true });
+
         try {
             await authService.register(email, password, userData);
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const { user: loggedInUser, userData: loggedInUserData } = await authService.login(email, password);
+
+            dispatch({ type: 'SET_USER', payload: loggedInUser });
+            dispatch({ type: 'SET_USER_DATA', payload: loggedInUserData });
         } catch (error) {
             dispatch({ type: 'SET_ERROR', payload: error.message });
             throw error;
