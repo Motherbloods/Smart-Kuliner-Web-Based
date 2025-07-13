@@ -293,11 +293,7 @@ const OrderDetail = ({ order, onBack, onUpdateStatus }) => {
                         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Alamat Pengiriman</h3>
                             <div className="space-y-2">
-                                <p className="text-sm text-gray-700">{order.shippingAddress.street}</p>
-                                <p className="text-sm text-gray-700">
-                                    {order.shippingAddress.city}, {order.shippingAddress.state} {order.shippingAddress.zipCode}
-                                </p>
-                                <p className="text-sm text-gray-700">{order.shippingAddress.country}</p>
+                                <p className="text-sm text-gray-700">{order.shippingAddress}</p>
                             </div>
                         </div>
                     )}

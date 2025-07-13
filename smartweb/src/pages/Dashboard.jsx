@@ -158,18 +158,19 @@ const Dashboard = () => {
     const handleYearChange = (year) => {
         setSelectedYear(year);
     };
+
     return (
-        <div className="space-y-6">
-            {/* Stats */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <div className="space-y-4 sm:space-y-6 py-4 sm:p-0">
+            {/* Stats - Mobile responsive grid */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
                 <StatCard label="Total Orders" value={stats.totalOrders} growth={stats.ordersGrowth} icon="📦" />
                 <StatCard label="Active Orders" value={stats.activeOrders} icon="⏳" statusColor="yellow" />
                 <StatCard label="Completed Orders" value={stats.completedOrders} icon="✅" statusColor="green" />
                 <StatCard label="Revenue" value={formatCurrency(stats.totalRevenue)} growth={stats.revenueGrowth} icon="💰" />
             </div>
 
-            {/* Chart & Best Sellers */}
-            <div className="grid grid-cols-1 xl:grid-cols-3 gap-6">
+            {/* Chart - Full width on mobile */}
+            <div className="w-full">
                 <SalesChart
                     data={chartData}
                     filter={filter}
@@ -184,10 +185,10 @@ const Dashboard = () => {
             {/* Recent Orders */}
             <RecentOrdersTable recentOrders={recentOrders} />
 
-            {/* Footer */}
-            <div className="flex items-center justify-between text-sm text-gray-500 pt-4">
+            {/* Footer - Mobile responsive */}
+            <div className="flex flex-col items-center sm:flex-row sm:items-center sm:justify-between text-sm text-gray-500 pt-4 space-y-2 sm:space-y-0">
                 <p>© 2025 - SmartKuliner Dashboard</p>
-                <div className="flex space-x-4">
+                <div className="flex flex-wrap gap-2 sm:gap-4">
                     <a href="#" className="hover:text-gray-700">About</a>
                     <a href="#" className="hover:text-gray-700">Careers</a>
                     <a href="#" className="hover:text-gray-700">Policy</a>

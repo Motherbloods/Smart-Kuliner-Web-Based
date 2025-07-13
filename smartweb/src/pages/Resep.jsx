@@ -310,7 +310,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
 
     if (selectedRecipe) {
         return (
-            <div className="min-h-screen bg-gray-50">
+            <div className="min-h-screen bg-gray-50 sm:px-0">
                 {/* Header */}
                 <div className="bg-white shadow-sm border-b sticky top-0 z-10">
                     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -326,7 +326,8 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                 <div className="h-6 w-px bg-gray-300" />
                                 <h1 className="text-xl font-semibold text-gray-900">Detail Resep</h1>
                             </div>
-                            <div className="flex items-center space-x-3">
+                            <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+
                                 {!isSeller &&
                                     <button
                                         onClick={() => toggleFavorite(selectedRecipe.id)}
@@ -353,7 +354,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                 </div>
 
                 {/* Recipe Detail Content */}
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+                <div className="max-w-7xl mx-auto sm:px-6 lg:px-8 py-8">
                     <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                         {/* Left Column - Image and Basic Info */}
                         <div className="lg:col-span-1">
@@ -445,12 +446,13 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
         <div className="min-h-screen bg-gray-50">
             {/* Header */}
             <div className="bg-white shadow-sm rounded-t-lg">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
+
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center space-x-4">
                             <h1 className="text-2xl font-bold text-gray-900">Resep</h1>
                         </div>
-                        <div className="flex items-center space-x-3">
+                        <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
                             {isSeller && <button
                                 onClick={onAddRecipe}
                                 className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
@@ -482,34 +484,40 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
             {/* Filters */}
             <div className="bg-white rounded-b-lg shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between space-y-4 sm:space-y-0">
-                        <div className="flex items-center space-x-4">
-                            <div className="relative">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+                        <div className="flex flex-col sm:flex-row w-full gap-4">
+                            {/* Input Pencarian */}
+                            <div className="relative w-full sm:w-1/2">
                                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400" />
                                 <input
                                     type="text"
                                     placeholder="Cari resep..."
                                     value={searchTerm}
                                     onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                    className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                 />
                             </div>
-                            <select
-                                value={selectedCategory}
-                                onChange={(e) => setSelectedCategory(e.target.value)}
-                                className="px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                            >
-                                {categoryLabelList.map(category => (
-                                    <option key={category} value={category}>{category}</option>
-                                ))}
-                            </select>
+
+                            {/* Dropdown Kategori */}
+                            <div className="w-full sm:w-1/2">
+                                <select
+                                    value={selectedCategory}
+                                    onChange={(e) => setSelectedCategory(e.target.value)}
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                                >
+                                    {categoryLabelList.map(category => (
+                                        <option key={category} value={category}>{category}</option>
+                                    ))}
+                                </select>
+                            </div>
                         </div>
                     </div>
+
                 </div>
             </div>
 
             {/* Recipe Grid/List */}
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <div className="max-w-7xl mx-auto px-2 sm:px-6 lg:px-8 py-6">
                 {filteredRecipes.length === 0 ? (
                     <div className="text-center py-12">
                         <ChefHat className="h-16 w-16 text-gray-300 mx-auto mb-4" />
@@ -518,14 +526,14 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                     </div>
                 ) : (
                     <div className={viewMode === 'grid'
-                        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'
+                        ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6'
                         : 'space-y-4'
                     }>
                         {filteredRecipes.map((recipe) => (
                             <div
                                 key={recipe.id}
-                                className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer ${viewMode === 'list' ? 'flex space-x-4 p-4' : 'overflow-hidden'
-                                    }`}
+                                className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden ${viewMode === 'list' ? 'flex space-x-4 p-4' : ''}`}
+
                                 onClick={() => handleRecipeClick(recipe)}
                             >
                                 {viewMode === 'grid' ? (
@@ -534,7 +542,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                             <img
                                                 src={recipe.imageUrl}
                                                 alt={recipe.title}
-                                                className="w-full h-full object-cover"
+                                                className="w-full h-full object-cover rounded-t-lg"
                                             />
                                             <div className="absolute top-3 right-3">
                                                 <span className={`px-2 py-1 rounded-full text-xs font-medium ${getDifficultyColor(recipe.difficulty)}`}>

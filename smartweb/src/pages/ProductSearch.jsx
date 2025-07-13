@@ -151,23 +151,22 @@ const ProductSearchPage = () => {
         <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
             {/* Header with Search */}
             <div className="bg-white shadow-sm border-b border-gray-200 sticky top-0 z-20">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-3 sm:py-4">
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-4">
+                        <div className="flex items-center space-x-2 sm:space-x-4">
                             <button
                                 onClick={handleBackClick}
                                 className="p-2 hover:bg-gray-100 rounded-lg transition-colors"
                             >
                                 <ArrowLeft className="h-5 w-5 text-gray-600" />
                             </button>
-                            <h1 className="text-xl font-bold text-gray-800">Cari Produk</h1>
+                            <h1 className="text-lg sm:text-xl font-bold text-gray-800">Cari Produk</h1>
                         </div>
-
-                        {/* Search Bar */}
-                        <div className="flex-1 max-w-2xl mx-8">
+                        {/* Search Bar - Full width on mobile */}
+                        <div className="flex-1 max-w-2xl mx-2 sm:mx-8">
                             <form onSubmit={handleSearch} className="relative">
                                 <div className="relative">
-                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                                    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-gray-400" />
                                     <input
                                         type="text"
                                         value={searchInput}
@@ -177,8 +176,8 @@ const ProductSearchPage = () => {
                                                 handleSearch(e);
                                             }
                                         }}
-                                        placeholder="Cari makanan, restoran, atau lokasi..."
-                                        className="w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm"
+                                        placeholder="Cari makanan, restoran..."
+                                        className="w-full pl-8 sm:pl-10 pr-10 sm:pr-12 py-2 sm:py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white shadow-sm text-sm sm:text-base"
                                     />
                                     {searchQuery && (
                                         <button
@@ -192,26 +191,25 @@ const ProductSearchPage = () => {
                                 </div>
                             </form>
                         </div>
-
-                        {/* Filter Toggle */}
+                        {/* Filter Toggle - Icon only on mobile */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                            className="flex items-center space-x-2 px-3 sm:px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                         >
                             <SlidersHorizontal className="h-4 w-4" />
-                            <span>Filter</span>
+                            <span className="hidden sm:inline">Filter</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-                <div className="flex gap-6">
-                    {/* Sidebar Filters */}
+            <div className="max-w-7xl mx-auto px-3 sm:px-6 lg:px-8 py-4 sm:py-6">
+                <div className="flex flex-col lg:flex-row gap-4 lg:gap-6">
+                    {/* Sidebar Filters - Full width on mobile */}
                     {showFilters && (
-                        <div className="w-80 flex-shrink-0 sticky top-24 self-start h-fit">
+                        <div className="w-full lg:w-80 lg:flex-shrink-0 lg:sticky lg:top-24 lg:self-start lg:h-fit">
                             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                                <div className="p-6 border-b border-gray-200">
+                                <div className="p-4 sm:p-6 border-b border-gray-200">
                                     <div className="flex items-center justify-between">
                                         <h3 className="text-lg font-semibold text-gray-800">Filter Produk</h3>
                                         <button
@@ -222,10 +220,9 @@ const ProductSearchPage = () => {
                                         </button>
                                     </div>
                                 </div>
-
                                 <div className="divide-y divide-gray-200">
                                     {/* Category Filter */}
-                                    <div className="p-6">
+                                    <div className="p-4 sm:p-6">
                                         <button
                                             onClick={() => toggleSection('category')}
                                             className="flex items-center justify-between w-full text-left"
@@ -234,7 +231,7 @@ const ProductSearchPage = () => {
                                             {expandedSections.category ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
                                         </button>
                                         {expandedSections.category && (
-                                            <div className="mt-4 space-y-3">
+                                            <div className="mt-4 space-y-3 max-h-60 overflow-y-auto">
                                                 {categories.map(category => (
                                                     <label key={category} className="flex items-center">
                                                         <input
@@ -262,9 +259,8 @@ const ProductSearchPage = () => {
                                             </div>
                                         )}
                                     </div>
-
                                     {/* Price Range Filter */}
-                                    <div className="p-6">
+                                    <div className="p-4 sm:p-6">
                                         <button
                                             onClick={() => toggleSection('price')}
                                             className="flex items-center justify-between w-full text-left"
@@ -297,9 +293,8 @@ const ProductSearchPage = () => {
                                             </div>
                                         )}
                                     </div>
-
                                     {/* Rating Filter */}
-                                    <div className="p-6">
+                                    <div className="p-4 sm:p-6">
                                         <button
                                             onClick={() => toggleSection('rating')}
                                             className="flex items-center justify-between w-full text-left"
@@ -346,16 +341,15 @@ const ProductSearchPage = () => {
                                 <span className="ml-3 text-gray-600">Memuat produk...</span>
                             </div>
                         )}
-
                         {/* Content when not loading */}
                         {!isLoading && (
                             <>
                                 {/* Sort and Results Count */}
-                                <div className="flex items-center justify-between mb-6">
-                                    <div className="text-gray-600">
+                                <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 space-y-4 sm:space-y-0">
+                                    <div className="text-gray-600 text-sm sm:text-base">
                                         {filteredProducts.length} produk ditemukan
                                         {searchQuery && (
-                                            <span className="ml-2 text-blue-600 font-medium">
+                                            <span className="block sm:inline ml-0 sm:ml-2 text-blue-600 font-medium">
                                                 untuk "{searchQuery}"
                                             </span>
                                         )}
@@ -363,7 +357,7 @@ const ProductSearchPage = () => {
                                     <select
                                         value={sortBy}
                                         onChange={(e) => setSortBy(e.target.value)}
-                                        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                                        className="px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm sm:text-base"
                                     >
                                         <option value="rating">Rating Tertinggi</option>
                                         <option value="price_low">Harga Terendah</option>
@@ -371,25 +365,23 @@ const ProductSearchPage = () => {
                                         <option value="reviews">Ulasan Terbanyak</option>
                                     </select>
                                 </div>
-
                                 {/* Product Grid */}
                                 <ProductGrid
                                     products={filteredProducts}
                                     onProductClick={handleProductClick}
-                                    gridResponsive={showFilters ? 'grid-cols-1 md:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 md:grid-cols-2 lg:grid-cols-4'}
+                                    gridResponsive={showFilters ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}
                                     showBuyButton={true}
                                 />
-
                                 {/* Empty State */}
                                 {filteredProducts.length === 0 && products.length > 0 && (
                                     <div className="text-center py-12">
-                                        <div className="w-24 h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                            <Search className="h-8 w-8 text-gray-400" />
+                                        <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
+                                            <Search className="h-6 w-6 sm:h-8 sm:w-8 text-gray-400" />
                                         </div>
                                         <h3 className="text-lg font-semibold text-gray-800 mb-2">
                                             Tidak ada produk ditemukan
                                         </h3>
-                                        <p className="text-gray-600 mb-4">
+                                        <p className="text-gray-600 mb-4 text-sm sm:text-base px-4">
                                             Coba ubah kata kunci pencarian atau filter yang dipilih
                                         </p>
                                         <button
@@ -397,7 +389,7 @@ const ProductSearchPage = () => {
                                                 clearSearch();
                                                 clearAllFilters();
                                             }}
-                                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm sm:text-base"
                                         >
                                             Reset Semua Filter
                                         </button>

@@ -296,15 +296,15 @@ const Profile = () => {
         );
     }
 
-    return (
-        <div className="min-h-screen bg-gray-50 p-6">
-            <div className="max-w-4xl mx-auto">
 
+    return (
+        <div className="min-h-screen bg-gray-50 p-3 sm:p-6">
+            <div className="max-w-4xl mx-auto">
                 {/* Header */}
-                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                    <div className="flex justify-between items-start">
-                        <div className="flex items-center space-x-4">
-                            <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center">
+                <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 mb-4 sm:mb-6">
+                    <div className="flex flex-col sm:flex-row sm:justify-between sm:items-start space-y-4 sm:space-y-0">
+                        <div className="flex flex-col sm:flex-row items-center sm:items-start sm:space-x-4 text-center sm:text-left">
+                            <div className="w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mb-3 sm:mb-0">
                                 {(userData.profileImageUrl || sellerData?.profileImage) ? (
                                     <img
                                         src={userData.profileImageUrl || sellerData?.profileImage}
@@ -312,44 +312,41 @@ const Profile = () => {
                                         className="w-full h-full rounded-full object-cover"
                                     />
                                 ) : (
-                                    <User className="h-10 w-10 text-white" />
+                                    <User className="h-8 w-8 sm:h-10 sm:w-10 text-white" />
                                 )}
                             </div>
-                            <div>
-                                <h1 className="text-2xl font-bold text-gray-900">
+                            <div className="flex-1">
+                                <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
                                     {userData.seller ? (sellerData?.namaToko || userData.name) : userData.name}
                                 </h1>
-                                <p className="text-gray-600">
+                                <p className="text-sm sm:text-base text-gray-600 mt-1">
                                     {userData.seller ? 'Seller' : 'User'} • Bergabung {formatDate(userData.createdAt)}
                                 </p>
-                                <div className="flex items-center space-x-2 mt-1">
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'
-                                        }`}>
+                                <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 mt-2">
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         ✓ Email Terverifikasi
                                     </span>
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800'
-                                        }`}>
+                                    <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
                                         ✓ Telepon Terverifikasi
                                     </span>
                                 </div>
                             </div>
                         </div>
-
-                        <div className="flex space-x-2">
+                        <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
                             {!isEditing ? (
                                 <button
                                     onClick={handleEdit}
-                                    className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center space-x-2"
+                                    className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center space-x-2"
                                 >
                                     <Edit3 className="h-4 w-4" />
                                     <span>Perbarui Profil</span>
                                 </button>
                             ) : (
-                                <div className="flex space-x-2">
+                                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2">
                                     <button
                                         onClick={handleSave}
                                         disabled={loading}
-                                        className="px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center space-x-2 disabled:opacity-50"
+                                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-white bg-green-600 rounded-lg hover:bg-green-700 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
                                     >
                                         <Save className="h-4 w-4" />
                                         <span>{loading ? 'Menyimpan...' : 'Simpan'}</span>
@@ -357,7 +354,7 @@ const Profile = () => {
                                     <button
                                         onClick={handleCancel}
                                         disabled={loading}
-                                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center space-x-2 disabled:opacity-50"
+                                        className="w-full sm:w-auto px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2 disabled:opacity-50"
                                     >
                                         <X className="h-4 w-4" />
                                         <span>Batal</span>
@@ -369,15 +366,14 @@ const Profile = () => {
 
                     {/* Alert Messages */}
                     {error && (
-                        <div className="mt-4 flex items-center p-3 bg-red-50 border border-red-200 rounded-lg">
-                            <AlertCircle className="h-5 w-5 text-red-400 mr-2" />
+                        <div className="mt-4 flex items-start p-3 bg-red-50 border border-red-200 rounded-lg">
+                            <AlertCircle className="h-5 w-5 text-red-400 mr-2 flex-shrink-0 mt-0.5" />
                             <span className="text-sm text-red-800">{error}</span>
                         </div>
                     )}
-
                     {success && (
-                        <div className="mt-4 flex items-center p-3 bg-green-50 border border-green-200 rounded-lg">
-                            <Shield className="h-5 w-5 text-green-400 mr-2" />
+                        <div className="mt-4 flex items-start p-3 bg-green-50 border border-green-200 rounded-lg">
+                            <Shield className="h-5 w-5 text-green-400 mr-2 flex-shrink-0 mt-0.5" />
                             <span className="text-sm text-green-800">{success}</span>
                         </div>
                     )}
@@ -385,65 +381,61 @@ const Profile = () => {
 
                 {/* Seller Stats (only for sellers) */}
                 {userData.seller && (
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-2 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-4 sm:mb-6">
                         {loadingSellerData ? (
-                            <div className="md:col-span-4 text-center py-8">
+                            <div className="col-span-2 sm:col-span-2 lg:col-span-4 text-center py-8">
                                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
                                 <p className="text-gray-600">Memuat data seller...</p>
                             </div>
                         ) : (
                             <>
-                                <div className="bg-white rounded-lg shadow-sm p-4">
+                                <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <Star className="h-8 w-8 text-yellow-400" />
+                                            <Star className="h-6 w-6 sm:h-8 sm:w-8 text-yellow-400" />
                                         </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-gray-600">Rating</p>
-                                            <p className="text-lg font-semibold text-gray-900">
+                                        <div className="ml-2 sm:ml-3 min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-gray-600">Rating</p>
+                                            <p className="text-sm sm:text-lg font-semibold text-gray-900">
                                                 {sellerData?.rating || 0}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="bg-white rounded-lg shadow-sm p-4">
+                                <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <Package className="h-8 w-8 text-blue-400" />
+                                            <Package className="h-6 w-6 sm:h-8 sm:w-8 text-blue-400" />
                                         </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-gray-600">Total Produk</p>
-                                            <p className="text-lg font-semibold text-gray-900">
+                                        <div className="ml-2 sm:ml-3 min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-gray-600">Total Produk</p>
+                                            <p className="text-sm sm:text-lg font-semibold text-gray-900">
                                                 {totalProducts}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="bg-white rounded-lg shadow-sm p-4">
+                                <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <Shield className="h-8 w-8 text-green-400" />
+                                            <Shield className="h-6 w-6 sm:h-8 sm:w-8 text-green-400" />
                                         </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-gray-600">Status</p>
-                                            <p className={`text-lg font-semibold ${sellerData?.isVerified ? 'text-green-600' : 'text-red-600'
-                                                }`}>
+                                        <div className="ml-2 sm:ml-3 min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-gray-600">Status</p>
+                                            <p className={`text-xs sm:text-lg font-semibold ${sellerData?.isVerified ? 'text-green-600' : 'text-red-600'}`}>
                                                 {sellerData?.isVerified ? 'Terverifikasi' : 'Belum Terverifikasi'}
                                             </p>
                                         </div>
                                     </div>
                                 </div>
-
-                                <div className="bg-white rounded-lg shadow-sm p-4">
+                                <div className="bg-white rounded-lg shadow-sm p-3 sm:p-4">
                                     <div className="flex items-center">
                                         <div className="flex-shrink-0">
-                                            <Clock className="h-8 w-8 text-purple-400" />
+                                            <Clock className="h-6 w-6 sm:h-8 sm:w-8 text-purple-400" />
                                         </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm font-medium text-gray-600">Bergabung Seller</p>
-                                            <p className="text-lg font-semibold text-gray-900">
+                                        <div className="ml-2 sm:ml-3 min-w-0">
+                                            <p className="text-xs sm:text-sm font-medium text-gray-600">Bergabung Seller</p>
+                                            <p className="text-xs sm:text-lg font-semibold text-gray-900">
                                                 {sellerData?.joinedDate ? formatDate(sellerData.joinedDate) : '-'}
                                             </p>
                                         </div>
@@ -455,45 +447,40 @@ const Profile = () => {
                 )}
 
                 {/* Profile Details */}
-                <div className="bg-white rounded-lg shadow-sm p-6">
-                    <h2 className="text-xl font-semibold text-gray-900 mb-6">Informasi Profil</h2>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-
+                <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6">
+                    <h2 className="text-lg sm:text-xl font-semibold text-gray-900 mb-4 sm:mb-6">Informasi Profil</h2>
+                    <div className="space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
                         {/* Personal Information */}
                         <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                                <User className="h-5 w-5 mr-2" />
+                            <h3 className="text-base sm:text-lg font-medium text-gray-900 flex items-center">
+                                <User className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                 Informasi Pribadi
                             </h3>
-
-                            <div className="space-y-3">
+                            <div className="space-y-3 sm:space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Nama Lengkap</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Nama Lengkap</label>
                                     {isEditing ? (
                                         <input
                                             type="text"
                                             value={editForm.name || ''}
                                             onChange={(e) => handleInputChange('name', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                             placeholder="Masukkan nama lengkap"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.name || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900 break-words">{userData.name || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                    <label className="block text-sm font-medium text-gray-700 flex items-center mb-1">
                                         <Mail className="h-4 w-4 mr-1" />
                                         Email
                                     </label>
-                                    <p className="mt-1 text-gray-900">{userData.email || '-'}</p>
+                                    <p className="text-sm sm:text-base text-gray-900 break-all">{userData.email || '-'}</p>
                                     <p className="text-xs text-gray-500 mt-1">Email tidak dapat diubah</p>
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                    <label className="block text-sm font-medium text-gray-700 flex items-center mb-1">
                                         <Phone className="h-4 w-4 mr-1" />
                                         Nomor Telepon
                                     </label>
@@ -502,33 +489,31 @@ const Profile = () => {
                                             type="tel"
                                             value={editForm.phoneNumber || ''}
                                             onChange={(e) => handleInputChange('phoneNumber', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                             placeholder="Masukkan nomor telepon"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.phoneNumber || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{userData.phoneNumber || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Jenis Kelamin</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Jenis Kelamin</label>
                                     {isEditing ? (
                                         <select
                                             value={editForm.gender || ''}
                                             onChange={(e) => handleInputChange('gender', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                         >
                                             <option value="">Pilih Jenis Kelamin</option>
                                             <option value="Laki-laki">Laki-laki</option>
                                             <option value="Perempuan">Perempuan</option>
                                         </select>
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.gender || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{userData.gender || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                    <label className="block text-sm font-medium text-gray-700 flex items-center mb-1">
                                         <Calendar className="h-4 w-4 mr-1" />
                                         Tanggal Lahir
                                     </label>
@@ -537,10 +522,10 @@ const Profile = () => {
                                             type="date"
                                             value={formatDateForInput(editForm.dateOfBirth) || ''}
                                             onChange={(e) => handleInputChange('dateOfBirth', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{formatDate(userData.dateOfBirth)}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{formatDate(userData.dateOfBirth)}</p>
                                     )}
                                 </div>
                             </div>
@@ -548,14 +533,13 @@ const Profile = () => {
 
                         {/* Address Information */}
                         <div className="space-y-4">
-                            <h3 className="text-lg font-medium text-gray-900 flex items-center">
-                                <MapPin className="h-5 w-5 mr-2" />
+                            <h3 className="text-base sm:text-lg font-medium text-gray-900 flex items-center">
+                                <MapPin className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                 Alamat
                             </h3>
-
-                            <div className="space-y-3">
+                            <div className="space-y-3 sm:space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 flex items-center">
+                                    <label className="block text-sm font-medium text-gray-700 flex items-center mb-1">
                                         <Home className="h-4 w-4 mr-1" />
                                         Alamat Lengkap
                                     </label>
@@ -564,56 +548,53 @@ const Profile = () => {
                                             value={editForm.address || ''}
                                             onChange={(e) => handleInputChange('address', e.target.value)}
                                             rows={3}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base resize-none"
                                             placeholder="Masukkan alamat lengkap"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.address || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900 break-words">{userData.address || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Kota</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kota</label>
                                     {isEditing ? (
                                         <input
                                             type="text"
                                             value={editForm.city || ''}
                                             onChange={(e) => handleInputChange('city', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                             placeholder="Masukkan kota"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.city || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{userData.city || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Provinsi</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Provinsi</label>
                                     {isEditing ? (
                                         <input
                                             type="text"
                                             value={editForm.province || ''}
                                             onChange={(e) => handleInputChange('province', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                             placeholder="Masukkan provinsi"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.province || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{userData.province || '-'}</p>
                                     )}
                                 </div>
-
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700">Kode Pos</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Kode Pos</label>
                                     {isEditing ? (
                                         <input
                                             type="text"
                                             value={editForm.postalCode || ''}
                                             onChange={(e) => handleInputChange('postalCode', e.target.value)}
-                                            className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                            className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                             placeholder="Masukkan kode pos"
                                         />
                                     ) : (
-                                        <p className="mt-1 text-gray-900">{userData.postalCode || '-'}</p>
+                                        <p className="text-sm sm:text-base text-gray-900">{userData.postalCode || '-'}</p>
                                     )}
                                 </div>
                             </div>
@@ -622,72 +603,68 @@ const Profile = () => {
 
                     {/* Seller-specific Information */}
                     {userData.seller && (
-                        <div className="mt-8 pt-8 border-t border-gray-200">
-                            <h3 className="text-lg font-medium text-gray-900 mb-4 flex items-center">
-                                <Building className="h-5 w-5 mr-2" />
+                        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
+                            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4 flex items-center">
+                                <Building className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
                                 Informasi Toko
                             </h3>
-
                             {loadingSellerData ? (
                                 <div className="text-center py-8">
                                     <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600 mx-auto mb-2"></div>
                                     <p className="text-gray-600">Memuat data toko...</p>
                                 </div>
                             ) : (
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="space-y-4 sm:space-y-6 lg:space-y-0 lg:grid lg:grid-cols-2 lg:gap-6">
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Nama Toko</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Nama Toko</label>
                                         {isEditing ? (
                                             <input
                                                 type="text"
                                                 value={editForm.sellerInfo?.nameToko || ''}
                                                 onChange={(e) => handleSellerInputChange('namaToko', e.target.value)}
-                                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                                 placeholder="Masukkan nama toko"
                                             />
                                         ) : (
-                                            <p className="mt-1 text-gray-900">{sellerData?.nameToko || '-'}</p>
+                                            <p className="text-sm sm:text-base text-gray-900 break-words">{sellerData?.namaToko || '-'}</p>
                                         )}
                                     </div>
-
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Lokasi Toko</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Lokasi Toko</label>
                                         {isEditing ? (
                                             <input
                                                 type="text"
                                                 value={editForm.sellerInfo?.location || ''}
                                                 onChange={(e) => handleSellerInputChange('location', e.target.value)}
-                                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                                 placeholder="Masukkan lokasi toko"
                                             />
                                         ) : (
-                                            <p className="mt-1 text-gray-900">{sellerData?.location || '-'}</p>
+                                            <p className="text-sm sm:text-base text-gray-900 break-words">{sellerData?.location || '-'}</p>
                                         )}
                                     </div>
-
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Kategori Toko</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Kategori Toko</label>
                                         {isEditing ? (
                                             <input
                                                 type="text"
                                                 value={editForm.sellerInfo?.category || ''}
                                                 onChange={(e) => handleSellerInputChange('category', e.target.value)}
-                                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                                 placeholder="Masukkan kategori toko"
                                             />
                                         ) : (
-                                            <p className="mt-1 text-gray-900">{sellerData?.category || '-'}</p>
+                                            <p className="text-sm sm:text-base text-gray-900">{sellerData?.category || '-'}</p>
                                         )}
                                     </div>
-
                                     <div>
-                                        <label className="block text-sm font-medium text-gray-700">Tags Toko</label>
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Tags Toko</label>
                                         {isEditing ? (
                                             <input
                                                 type="text"
                                                 value={editForm.sellerInfo?.tags ? editForm.sellerInfo.tags.join(', ') : ''}
                                                 onChange={(e) => handleSellerArrayInputChange('tags', e.target.value)}
-                                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                                 placeholder="Pisahkan dengan koma (misal: makanan, minuman, halal)"
                                             />
                                         ) : (
@@ -699,23 +676,23 @@ const Profile = () => {
                                                         </span>
                                                     ))
                                                 ) : (
-                                                    <span className="text-gray-500">Belum ada tags</span>
+                                                    <span className="text-gray-500 text-sm">Belum ada tags</span>
                                                 )}
                                             </div>
                                         )}
                                     </div>
-
-                                    <div className="md:col-span-2">
-                                        <label className="block text-sm font-medium text-gray-700">Deskripsi Toko</label>
+                                    <div className="lg:col-span-2">
+                                        <label className="block text-sm font-medium text-gray-700 mb-1">Deskripsi Toko</label>
                                         {isEditing ? (
                                             <textarea
                                                 value={editForm.sellerInfo?.description || ''}
                                                 onChange={(e) => handleSellerInputChange('description', e.target.value)}
                                                 rows={4}
-                                                className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base resize-none"
+                                                placeholder="Masukkan deskripsi toko"
                                             />
                                         ) : (
-                                            <p className="mt-1 text-gray-900">{sellerData?.description || '-'}</p>
+                                            <p className="text-sm sm:text-base text-gray-900 break-words">{sellerData?.description || '-'}</p>
                                         )}
                                     </div>
                                 </div>
@@ -725,26 +702,26 @@ const Profile = () => {
 
                     {/* Favorite Categories (only for regular users) */}
                     {!userData.seller && (
-                        <div className="mt-8 pt-8 border-t border-gray-200">
-                            <h3 className="text-lg font-medium text-gray-900 mb-4">Kategori Favorit</h3>
+                        <div className="mt-6 sm:mt-8 pt-6 sm:pt-8 border-t border-gray-200">
+                            <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-4">Kategori Favorit</h3>
                             {isEditing ? (
                                 <input
                                     type="text"
                                     value={editForm.favoriteCategories ? editForm.favoriteCategories.join(', ') : ''}
                                     onChange={(e) => handleArrayInputChange('favoriteCategories', e.target.value)}
                                     placeholder="Pisahkan dengan koma (misal: Makanan Tradisional, Minuman, Cemilan)"
-                                    className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                                    className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 text-sm sm:text-base"
                                 />
                             ) : (
                                 <div className="flex flex-wrap gap-2">
                                     {userData.favoriteCategories && userData.favoriteCategories.length > 0 ? (
                                         userData.favoriteCategories.map((category, index) => (
-                                            <span key={index} className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-blue-100 text-blue-800">
+                                            <span key={index} className="inline-flex items-center px-2 py-1 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm font-medium bg-blue-100 text-blue-800 break-words">
                                                 {category}
                                             </span>
                                         ))
                                     ) : (
-                                        <span className="text-gray-500">Belum ada kategori favorit</span>
+                                        <span className="text-gray-500 text-sm">Belum ada kategori favorit</span>
                                     )}
                                 </div>
                             )}

@@ -16,6 +16,7 @@ const DashboardLayout = () => {
   const { userData, loading, isInitialized } = useAuth();
   const [activeMenu, setActiveMenu] = useState("products");
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
   // Set default activeMenu setelah userData tersedia
   useEffect(() => {
@@ -23,6 +24,23 @@ const DashboardLayout = () => {
       setActiveMenu(userData.seller ? "dashboard" : "products");
     }
   }, [userData, isInitialized]);
+
+  // Handle mobile menu toggle
+  const handleMobileMenuToggle = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Close mobile menu when screen size changes to desktop
+  useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth >= 1024) { // lg breakpoint
+        setIsMobileMenuOpen(false);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -37,10 +55,10 @@ const DashboardLayout = () => {
   // Tampilkan loading state sampai auth selesai diinisialisasi dan userData tersedia
   if (!isInitialized || loading || (isInitialized && !userData)) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center px-4">
         <div className="flex flex-col items-center space-y-4">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-          <div className="text-gray-600 text-lg">Memuat data pengguna...</div>
+          <div className="animate-spin rounded-full h-8 w-8 lg:h-12 lg:w-12 border-b-2 border-blue-600"></div>
+          <div className="text-gray-600 text-sm lg:text-lg text-center">Memuat data pengguna...</div>
         </div>
       </div>
     );
@@ -52,8 +70,15 @@ const DashboardLayout = () => {
         activeMenu={activeMenu}
         setActiveMenu={setActiveMenu}
         onToggle={setIsSidebarOpen}
+        isMobileMenuOpen={isMobileMenuOpen}
+        onMobileMenuToggle={handleMobileMenuToggle}
       />
-      <Navbar activeMenu={activeMenu} isSidebarOpen={isSidebarOpen} />
+      <Navbar
+        activeMenu={activeMenu}
+        isSidebarOpen={isSidebarOpen}
+        onMobileMenuToggle={handleMobileMenuToggle}
+        isMobileMenuOpen={isMobileMenuOpen}
+      />
       <PageContent activeMenu={activeMenu} isSidebarOpen={isSidebarOpen} />
     </div>
   );

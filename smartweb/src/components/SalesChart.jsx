@@ -133,15 +133,15 @@ const SalesChart = ({
     };
 
     return (
-        <div className="bg-white rounded-lg shadow-sm p-6 border border-gray-200 xl:col-span-2">
-            <div className="flex justify-between items-center mb-6">
+        <div className="bg-white rounded-lg shadow-sm p-4 sm:p-6 border border-gray-200">
+            <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 sm:mb-6 space-y-4 sm:space-y-0">
                 <h3 className="text-lg font-semibold text-gray-900">Grafik Penjualan</h3>
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-2">
                     {['daily', 'weekly', 'monthly'].map((f) => (
                         <button
                             key={f}
                             onClick={() => onFilterChange(f)}
-                            className={`px-3 py-1 text-sm rounded-md transition-colors ${filter === f
+                            className={`px-3 py-1 text-xs sm:text-sm rounded-md transition-colors whitespace-nowrap ${filter === f
                                 ? 'bg-blue-600 text-white'
                                 : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
                                 }`}
@@ -152,7 +152,7 @@ const SalesChart = ({
                 </div>
             </div>
 
-            {/* Navigation */}
+            {/* Navigation - Mobile responsive */}
             <div className="flex items-center justify-center mb-4">
                 <button
                     onClick={handlePreviousPeriod}
@@ -160,7 +160,7 @@ const SalesChart = ({
                 >
                     <ChevronLeft className="h-5 w-5 text-gray-600" />
                 </button>
-                <h4 className="text-xl font-semibold text-gray-800 mx-8 min-w-[200px] text-center">
+                <h4 className="text-lg sm:text-xl font-semibold text-gray-800 mx-4 sm:mx-8 min-w-0 text-center flex-1">
                     {getTitle()}
                 </h4>
                 <button
@@ -171,10 +171,10 @@ const SalesChart = ({
                 </button>
             </div>
 
-            {/* Chart */}
-            <div className="h-80">
+            {/* Chart - Responsive height */}
+            <div className="h-64 sm:h-80">
                 <ResponsiveContainer width="100%" height="100%">
-                    <LineChart data={chartData} margin={{ top: 5, right: 30, left: 20, bottom: 5 }}>
+                    <LineChart data={chartData} margin={{ top: 5, right: 10, left: 10, bottom: 5 }}>
                         <CartesianGrid strokeDasharray="3 3" stroke="#f0f0f0" />
                         <XAxis
                             dataKey="date"
@@ -183,11 +183,22 @@ const SalesChart = ({
                             angle={filter === 'monthly' ? -45 : 0}
                             textAnchor={filter === 'monthly' ? 'end' : 'middle'}
                             height={filter === 'monthly' ? 80 : 60}
-                            fontSize={12}
+                            fontSize={10}
+                            tick={{ fontSize: 10 }}
                         />
                         <YAxis
-                            tickFormatter={(value) => formatCurrency(value)}
-                            fontSize={12}
+                            tickFormatter={(value) => {
+                                // Format currency lebih singkat untuk mobile
+                                if (value >= 1000000) {
+                                    return `${(value / 1000000).toFixed(1)}M`;
+                                } else if (value >= 1000) {
+                                    return `${(value / 1000).toFixed(1)}K`;
+                                }
+                                return value;
+                            }}
+                            fontSize={10}
+                            tick={{ fontSize: 10 }}
+                            width={50}
                         />
                         <Tooltip
                             formatter={customTooltipFormatter}
@@ -196,28 +207,29 @@ const SalesChart = ({
                                 backgroundColor: '#fff',
                                 border: '1px solid #e5e7eb',
                                 borderRadius: '8px',
-                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)'
+                                boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+                                fontSize: '12px'
                             }}
                         />
                         <Line
                             type="monotone"
                             dataKey="amount"
                             stroke="#3b82f6"
-                            strokeWidth={3}
-                            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 4 }}
-                            activeDot={{ r: 6, fill: '#1d4ed8' }}
+                            strokeWidth={2}
+                            dot={{ fill: '#3b82f6', strokeWidth: 2, r: 3 }}
+                            activeDot={{ r: 5, fill: '#1d4ed8' }}
                         />
                     </LineChart>
                 </ResponsiveContainer>
             </div>
 
-            {/* Summary */}
-            <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                <div className="flex justify-between items-center">
+            {/* Summary - Mobile responsive */}
+            <div className="mt-4 p-3 sm:p-4 bg-gray-50 rounded-lg">
+                <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center space-y-2 sm:space-y-0">
                     <span className="text-sm text-gray-600">
                         Total Penjualan ({getTitle()})
                     </span>
-                    <span className="text-lg font-semibold text-gray-900">
+                    <span className="text-base sm:text-lg font-semibold text-gray-900">
                         {formatCurrency(chartData.reduce((sum, item) => sum + item.amount, 0))}
                     </span>
                 </div>

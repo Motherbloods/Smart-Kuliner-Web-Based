@@ -150,11 +150,11 @@ const OrderList = ({ sellerId, onUpdateStatus }) => {
     }
 
     return (
-        <div className="space-y-6">
+        <div className="space-y-4 p-4 sm:space-y-6 sm:p-0">
             {/* Header */}
-            <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
+            <div className="flex flex-col gap-4">
                 <div>
-                    <h2 className="text-3xl font-bold text-gray-900">Daftar Pesanan</h2>
+                    <h2 className="text-2xl sm:text-3xl font-bold text-gray-900">Daftar Pesanan</h2>
                     <nav className="text-sm text-gray-500 mt-1">
                         <span>Home</span>
                         <span className="mx-1">›</span>
@@ -163,24 +163,24 @@ const OrderList = ({ sellerId, onUpdateStatus }) => {
                 </div>
 
                 {/* Filters */}
-                <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-3">
+                <div className="flex flex-col gap-3">
                     <div className="flex items-center gap-2 bg-white rounded-lg border border-gray-200 px-3 py-2">
-                        <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <svg className="w-4 h-4 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"></path>
                         </svg>
                         <input
                             type="date"
                             value={dateFrom}
                             onChange={(e) => setDateFrom(e.target.value)}
-                            className="text-sm border-none outline-none bg-transparent"
+                            className="text-sm border-none outline-none bg-transparent flex-1 min-w-0"
                             placeholder="Dari tanggal"
                         />
-                        <span className="text-gray-400">-</span>
+                        <span className="text-gray-400 flex-shrink-0">-</span>
                         <input
                             type="date"
                             value={dateTo}
                             onChange={(e) => setDateTo(e.target.value)}
-                            className="text-sm border-none outline-none bg-transparent"
+                            className="text-sm border-none outline-none bg-transparent flex-1 min-w-0"
                             placeholder="Sampai tanggal"
                         />
                     </div>
@@ -200,182 +200,303 @@ const OrderList = ({ sellerId, onUpdateStatus }) => {
             </div>
 
             {/* Status Overview Cards */}
-            <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3 sm:gap-4">
                 {Object.entries(statusOptions).filter(([key]) => key !== 'all').map(([key, label]) => {
                     const count = getStatusCount(key);
                     const config = statusConfig[key];
                     return (
-                        <div key={key} className="bg-white rounded-lg border border-gray-200 p-4 hover:shadow-md transition-shadow">
+                        <div key={key} className="bg-white rounded-lg border border-gray-200 p-3 sm:p-4 hover:shadow-md transition-shadow">
                             <div className="flex items-center justify-between">
-                                <div>
-                                    <p className="text-2xl font-bold text-gray-900">{count}</p>
-                                    <p className="text-xs text-gray-500 mt-1">{label}</p>
+                                <div className="min-w-0 flex-1">
+                                    <p className="text-xl sm:text-2xl font-bold text-gray-900">{count}</p>
+                                    <p className="text-xs text-gray-500 mt-1 truncate">{label}</p>
                                 </div>
-                                <div className={`w-3 h-3 rounded-full ${config.dot}`}></div>
+                                <div className={`w-3 h-3 rounded-full flex-shrink-0 ${config.dot}`}></div>
                             </div>
                         </div>
                     );
                 })}
             </div>
 
-            {/* Orders Table */}
+            {/* Orders Table/Cards */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
-                <div className="p-6 border-b border-gray-200">
+                <div className="p-4 sm:p-6 border-b border-gray-200">
                     <div className="flex items-center justify-between">
-                        <h3 className="text-xl font-semibold text-gray-900">Pesanan Terbaru</h3>
-                        <div className="text-sm text-gray-500">
-                            Menampilkan {filteredOrders.length} dari {orders.length} pesanan
+                        <h3 className="text-lg sm:text-xl font-semibold text-gray-900">Pesanan Terbaru</h3>
+                        <div className="text-xs sm:text-sm text-gray-500">
+                            {filteredOrders.length} dari {orders.length}
                         </div>
                     </div>
                 </div>
 
                 {filteredOrders.length > 0 ? (
-                    <div className="overflow-x-auto">
-                        <table className="w-full">
-                            <thead className="bg-gray-50">
-                                <tr>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggan</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
-                                    <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
-                                </tr>
-                            </thead>
-                            <tbody className="bg-white divide-y divide-gray-200">
-                                {filteredOrders.map((order) => {
-                                    const status = statusConfig[order.status];
-                                    const customerInitial = order.buyerName?.[0]?.toUpperCase() || '?';
-                                    const isUpdating = updatingOrderId === order.id;
+                    <>
+                        {/* Desktop Table View */}
+                        <div className="hidden lg:block overflow-x-auto">
+                            <table className="w-full">
+                                <thead className="bg-gray-50">
+                                    <tr>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Produk</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Order ID</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Tanggal</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Pelanggan</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Total</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Pembayaran</th>
+                                        <th className="text-left py-4 px-6 text-xs font-medium text-gray-500 uppercase tracking-wider">Aksi</th>
+                                    </tr>
+                                </thead>
+                                <tbody className="bg-white divide-y divide-gray-200">
+                                    {filteredOrders.map((order) => {
+                                        const status = statusConfig[order.status];
+                                        const customerInitial = order.buyerName?.[0]?.toUpperCase() || '?';
+                                        const isUpdating = updatingOrderId === order.id;
 
-                                    return (
-                                        <tr key={order.id} className="hover:bg-gray-50 transition-colors">
-                                            <td className="py-4 px-6">
-                                                <div className="flex items-center">
-                                                    {order.items[0]?.imageUrl && (
-                                                        <img
-                                                            src={order.items[0].imageUrl}
-                                                            alt={order.items[0].productName}
-                                                            className="w-10 h-10 rounded-lg object-cover mr-3"
-                                                        />
-                                                    )}
-                                                    <div>
-                                                        <div className="font-medium text-gray-900">
-                                                            {order.items[0]?.productName || 'N/A'}
-                                                        </div>
-                                                        {order.items.length > 1 && (
-                                                            <div className="text-xs text-gray-500">
-                                                                +{order.items.length - 1} item lainnya
+                                        return (
+                                            <tr key={order.id} className="hover:bg-gray-50 transition-colors">
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center">
+                                                        {order.items[0]?.imageUrl && (
+                                                            <img
+                                                                src={order.items[0].imageUrl}
+                                                                alt={order.items[0].productName}
+                                                                className="w-10 h-10 rounded-lg object-cover mr-3"
+                                                            />
+                                                        )}
+                                                        <div>
+                                                            <div className="font-medium text-gray-900">
+                                                                {order.items[0]?.productName || 'N/A'}
                                                             </div>
+                                                            {order.items.length > 1 && (
+                                                                <div className="text-xs text-gray-500">
+                                                                    +{order.items.length - 1} item lainnya
+                                                                </div>
+                                                            )}
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="text-sm font-mono text-gray-900">
+                                                        #{order.id?.slice(-8) || 'N/A'}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="text-sm text-gray-900">
+                                                        {formatDate(order.createdAt)}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center">
+                                                        <div
+                                                            className={`w-10 aspect-square rounded-full flex items-center justify-center text-white text-sm font-semibold leading-none mr-3 ${status.dot}`}
+                                                        >
+                                                            {customerInitial}
+                                                        </div>
+                                                        <div className="min-w-0">
+                                                            <div className="font-medium text-gray-900 truncate max-w-[120px] block">
+                                                                {order.buyerName}
+                                                            </div>
+                                                            <div className="text-xs text-gray-500 truncate max-w-[180px] block">
+                                                                {order.buyerEmail}
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${status.class}`}>
+                                                        <span className={`w-2 h-2 rounded-full mr-2 ${status.dot}`}></span>
+                                                        {status.text}
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="text-sm font-bold text-gray-900">
+                                                        {formatCurrency(order.totalAmount)}
+                                                    </div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {order.paymentMethod}
+                                                    </div>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200`}>
+                                                        COD
+                                                    </span>
+                                                </td>
+                                                <td className="py-4 px-6">
+                                                    <div className="flex items-center space-x-2">
+                                                        <button
+                                                            onClick={() => handleViewOrderDetail(order)}
+                                                            className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                                        >
+                                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                            </svg>
+                                                            Detail
+                                                        </button>
+
+                                                        {order.status === 'shipped' && (
+                                                            <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
+                                                                <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                                </svg>
+                                                                Menunggu Konfirmasi Customer
+                                                            </span>
+                                                        )}
+
+                                                        {status.nextStatus && (
+                                                            <button
+                                                                onClick={() => openUpdateModal(order)}
+                                                                disabled={isUpdating}
+                                                                className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                            >
+                                                                {isUpdating ? (
+                                                                    <>
+                                                                        <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                                        </svg>
+                                                                        Memproses...
+                                                                    </>
+                                                                ) : (
+                                                                    status.nextLabel
+                                                                )}
+                                                            </button>
                                                         )}
                                                     </div>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                </tbody>
+                            </table>
+                        </div>
+
+                        {/* Mobile Card View */}
+                        <div className="lg:hidden divide-y divide-gray-200">
+                            {filteredOrders.map((order) => {
+                                const status = statusConfig[order.status];
+                                const customerInitial = order.buyerName?.[0]?.toUpperCase() || '?';
+                                const isUpdating = updatingOrderId === order.id;
+
+                                return (
+                                    <div key={order.id} className="p-4 space-y-3">
+                                        {/* Order Header */}
+                                        <div className="flex items-start justify-between">
+                                            <div className="flex items-center space-x-3">
+                                                {order.items[0]?.imageUrl && (
+                                                    <img
+                                                        src={order.items[0].imageUrl}
+                                                        alt={order.items[0].productName}
+                                                        className="w-12 h-12 rounded-lg object-cover"
+                                                    />
+                                                )}
+                                                <div className="min-w-0 flex-1">
+                                                    <div className="font-medium text-gray-900 text-sm truncate">
+                                                        {order.items[0]?.productName || 'N/A'}
+                                                    </div>
+                                                    {order.items.length > 1 && (
+                                                        <div className="text-xs text-gray-500">
+                                                            +{order.items.length - 1} item lainnya
+                                                        </div>
+                                                    )}
+                                                    <div className="text-xs text-gray-500 font-mono">
+                                                        #{order.id?.slice(-8) || 'N/A'}
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="text-sm font-mono text-gray-900">
-                                                    #{order.id?.slice(-8) || 'N/A'}
+                                            </div>
+                                            <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium border ${status.class}`}>
+                                                <span className={`w-2 h-2 rounded-full mr-1 ${status.dot}`}></span>
+                                                {status.text}
+                                            </span>
+                                        </div>
+
+                                        {/* Order Details */}
+                                        <div className="grid grid-cols-2 gap-3 text-sm">
+                                            <div>
+                                                <div className="text-xs text-gray-500">Pelanggan</div>
+                                                <div className="flex items-center mt-1">
+                                                    <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-semibold mr-2 ${status.dot}`}>
+                                                        {customerInitial}
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <div className="font-medium text-gray-900 truncate text-sm">
+                                                            {order.buyerName}
+                                                        </div>
+                                                    </div>
                                                 </div>
-                                            </td>
-                                            <td className="py-4 px-6">
+                                            </div>
+                                            <div>
+                                                <div className="text-xs text-gray-500">Total</div>
+                                                <div className="font-bold text-gray-900 text-sm">
+                                                    {formatCurrency(order.totalAmount)}
+                                                </div>
+                                            </div>
+                                            <div>
+                                                <div className="text-xs text-gray-500">Tanggal</div>
                                                 <div className="text-sm text-gray-900">
                                                     {formatDate(order.createdAt)}
                                                 </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="flex items-center">
-                                                    <div
-                                                        className={`w-10 aspect-square rounded-full flex items-center justify-center text-white text-sm font-semibold leading-none mr-3 ${status.dot}`}
-                                                    >
-                                                        {customerInitial}
-                                                    </div>
-
-                                                    <div className="min-w-0">
-                                                        <div className="font-medium text-gray-900 truncate max-w-[120px] block">
-                                                            {order.buyerName}
-                                                        </div>
-                                                        <div className="text-xs text-gray-500 truncate max-w-[180px] block">
-                                                            {order.buyerEmail}
-                                                        </div>
-                                                    </div>
-
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className={`inline-flex items-center px-3 py-1 rounded-full text-xs font-medium border ${status.class}`}>
-                                                    <span className={`w-2 h-2 rounded-full mr-2 ${status.dot}`}></span>
-                                                    {status.text}
-                                                </span>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="text-sm font-bold text-gray-900">
-                                                    {formatCurrency(order.totalAmount)}
-                                                </div>
-                                                <div className="text-xs text-gray-500">
-                                                    {order.paymentMethod}
-                                                </div>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200
-                                                    }`}>
+                                            </div>
+                                            <div>
+                                                <div className="text-xs text-gray-500">Pembayaran</div>
+                                                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                                                     COD
                                                 </span>
-                                            </td>
-                                            <td className="py-4 px-6">
-                                                <div className="flex items-center space-x-2">
-                                                    {/* Detail Button */}
-                                                    <button
-                                                        onClick={() => handleViewOrderDetail(order)}
-                                                        className="inline-flex items-center px-3 py-1.5 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
-                                                    >
-                                                        <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
-                                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
-                                                        </svg>
-                                                        Detail
-                                                    </button>
+                                            </div>
+                                        </div>
 
-                                                    {/* Badge for Shipped Status */}
-                                                    {order.status === 'shipped' && (
-                                                        <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-orange-100 text-orange-800 border border-orange-200">
-                                                            <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
-                                                            </svg>
-                                                            Menunggu Konfirmasi Customer
-                                                        </span>
-                                                    )}
-
-                                                    {/* Update Status Button */}
-                                                    {status.nextStatus && (
-                                                        <button
-                                                            onClick={() => openUpdateModal(order)}
-                                                            disabled={isUpdating}
-                                                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                                                        >
-                                                            {isUpdating ? (
-                                                                <>
-                                                                    <svg className="animate-spin -ml-1 mr-2 h-3 w-3 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                                                                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                                                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                                                    </svg>
-                                                                    Memproses...
-                                                                </>
-                                                            ) : (
-                                                                status.nextLabel
-                                                            )}
-                                                        </button>
-                                                    )}
+                                        {/* Special Status for Shipped */}
+                                        {order.status === 'shipped' && (
+                                            <div className="bg-orange-50 border border-orange-200 rounded-lg p-3">
+                                                <div className="flex items-center text-orange-800 text-sm">
+                                                    <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                                    </svg>
+                                                    Menunggu Konfirmasi Customer
                                                 </div>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                            </tbody>
-                        </table>
-                    </div>
+                                            </div>
+                                        )}
+
+                                        {/* Action Buttons */}
+                                        <div className="flex flex-col sm:flex-row gap-2">
+                                            <button
+                                                onClick={() => handleViewOrderDetail(order)}
+                                                className="flex items-center justify-center px-4 py-2 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors"
+                                            >
+                                                <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                                                </svg>
+                                                Lihat Detail
+                                            </button>
+
+                                            {status.nextStatus && (
+                                                <button
+                                                    onClick={() => openUpdateModal(order)}
+                                                    disabled={isUpdating}
+                                                    className="flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                                                >
+                                                    {isUpdating ? (
+                                                        <>
+                                                            <svg className="animate-spin -ml-1 mr-2 h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                                                                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                                                                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                                                            </svg>
+                                                            Memproses...
+                                                        </>
+                                                    ) : (
+                                                        status.nextLabel
+                                                    )}
+                                                </button>
+                                            )}
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </>
                 ) : (
-                    <div className="text-center py-16">
+                    <div className="text-center py-12 px-4">
                         <svg className="mx-auto h-12 w-12 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path>
                         </svg>
