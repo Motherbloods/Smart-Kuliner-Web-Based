@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, ChefHat, UserPlus, Store, MapPin, Calendar, Phone } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { foodCategories, provinces } from '../utils/categories';

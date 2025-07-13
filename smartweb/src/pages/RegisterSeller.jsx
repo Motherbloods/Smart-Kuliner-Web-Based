@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Eye, EyeOff, Mail, Lock, User, Store, MapPin, Phone, FileImage, Upload, ChefHat, UserPlus, ArrowLeft } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 export function RegisterSellerPage() {
     const navigate = useNavigate();
@@ -29,6 +30,7 @@ export function RegisterSellerPage() {
         // Terms
         terms: false
     });
+    const { registerSeller } = useAuth();
 
     const [showPassword, setShowPassword] = useState(false);
     const [showPasswordConfirm, setShowPasswordConfirm] = useState(false);
@@ -96,7 +98,7 @@ export function RegisterSellerPage() {
         setError('');
 
         try {
-            const response = await authService.registerSeller(formData);
+            const response = await registerSeller(formData);
             console.log('Seller registration successful:', response);
             alert(`Registrasi berhasil! Selamat datang di SMARTKULINER, ${formData.store_name}!`);
         } catch (error) {
@@ -201,7 +203,7 @@ export function RegisterSellerPage() {
                         </div>
                     )}
 
-                    <form className="space-y-8">
+                    <form className="space-y-8" onSubmit={handleSubmit}>
                         {/* Store Information Section */}
                         <div className="border-b border-gray-200 pb-6">
                             <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">

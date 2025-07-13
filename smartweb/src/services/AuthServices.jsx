@@ -3,8 +3,10 @@ import {
     createUserWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
+    updateProfile,
 } from 'firebase/auth';
 import { auth } from '../config/firebase';
+import { imageUploadService } from './CloudinaryService.jsx';
 import {
     getFirestore,
     collection,
@@ -149,6 +151,84 @@ export const authService = {
         } catch (error) {
             console.error('[ERROR] Registrasi gagal:', error);
             throw new Error(error.message || 'Registrasi gagal');
+        }
+    },
+
+    registerSeller: async (formData) => {
+        try {
+            // 1. Register ke Firebase Auth
+            const userCredential = await createUserWithEmailAndPassword(
+                auth,
+                formData.email,
+                formData.password
+            );
+
+            const user = userCredential.user;
+            const uid = user.uid;
+            const timestamp = Date.now();
+
+            await updateProfile(user, { displayName: formData.store_name });
+
+            // 2. Upload logo dan banner (jika ada)
+            let logoUrl = '';
+            let bannerUrl = '';
+
+            if (formData.logo && formData.logo instanceof File) {
+                logoUrl = await imageUploadService.uploadToCloudinary(formData.logo, 'image', 'sellers/logo');
+            }
+
+            if (formData.banner && formData.banner instanceof File) {
+                bannerUrl = await imageUploadService.uploadToCloudinary(formData.banner, 'image', 'sellers/banner');
+            }
+
+            // 3. Simpan ke 'users'
+            const userData = {
+                uid,
+                name: formData.store_name,
+                email: formData.email,
+                phoneNumber: formData.phone_number || '',
+                seller: true,
+                address: formData.address || null,
+                city: formData.city || null,
+                province: formData.province || null,
+                postalCode: formData.postal_code || null,
+                namaToko: formData.store_name,
+                profileImageUrl: logoUrl || null,
+                emailVerified: false,
+                phoneVerified: false,
+                dateOfBirth: null,
+                gender: null,
+                favoriteCategories: [],
+                tokenFCM: null,
+                createdAt: new Date().toISOString(),
+                lastLoginAt: new Date().toISOString(),
+            };
+
+            await setDoc(doc(db, 'users', uid), userData);
+
+            // 4. Simpan ke 'sellers'
+            const sellerData = {
+                id: uid,
+                nameToko: formData.store_name,
+                description: formData.description,
+                location: `${formData.address}, ${formData.city}, ${formData.province} ${formData.postal_code}`,
+                category: formData.category || 'Lainnya',
+                isVerified: true,
+                joinedDate: timestamp,
+                profileImage: logoUrl,
+                bannerImage: bannerUrl,
+                rating: 0,
+                tags: ['Halal', 'Vegetarian', 'Spicy', 'Sweet', 'Traditional'],
+                totalProducts: 0,
+                tokenFCM: null,
+            };
+
+            await setDoc(doc(db, 'sellers', uid), sellerData);
+
+            return { uid, email: formData.email };
+        } catch (error) {
+            console.error('[ERROR] Register Seller:', error);
+            throw new Error(error.message || 'Gagal mendaftarkan seller');
         }
     },
 

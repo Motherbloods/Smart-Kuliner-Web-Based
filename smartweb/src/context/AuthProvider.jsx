@@ -69,6 +69,26 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const registerSeller = async (formData) => {
+
+        try {
+            await authService.registerSeller(formData);
+
+            await new Promise(resolve => setTimeout(resolve, 500));
+
+            const { user, userData } = await authService.login(formData.email, formData.password);
+
+            dispatch({ type: 'SET_USER', payload: user });
+            dispatch({ type: 'SET_USER_DATA', payload: userData });
+        } catch (error) {
+            dispatch({ type: 'SET_ERROR', payload: error.message });
+            throw error;
+        } finally {
+            dispatch({ type: 'SET_LOADING', payload: false });
+        }
+    };
+
+
     const logout = async () => {
         try {
             await authService.logout();
@@ -92,7 +112,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ ...state, login, register, logout, updateUserData }}>
+        <AuthContext.Provider value={{ ...state, login, register, registerSeller, logout, updateUserData }}>
             {children}
         </AuthContext.Provider>
     );
