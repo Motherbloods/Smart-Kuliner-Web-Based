@@ -4,7 +4,7 @@ import productService from "../services/ProductServices";
 import ProductGrid from "../components/ProductGrid";
 import { useAuth } from "../hooks/useAuth";
 
-function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
+function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct, userId }) {
     const [products, setProducts] = useState([]);
     const [loadMoreClicks, setLoadMoreClicks] = useState(0); // Track berapa kali load more diklik
     const { userData } = useAuth();
@@ -133,6 +133,7 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct }) {
                 gridResponsive={gridResponsive}
                 showBuyButton={true}
                 isSeller={userData?.seller}
+                userId={userId}
             />
 
             {/* Load More Button */}

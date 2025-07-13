@@ -2,12 +2,13 @@ import React, { useState } from 'react';
 import ProductsList from './ProductList';
 import AddProduct from './AddProduct';
 import EditProduct from './EditProduct';
+import { useAuth } from '../hooks/useAuth';
 
 const ProductManagement = ({ isSidebarOpen }) => {
     const [currentView, setCurrentView] = useState('list'); // 'list', 'add', 'edit'
     const [selectedProductId, setSelectedProductId] = useState(null);
     const [refreshKey, setRefreshKey] = useState(0);
-
+    const { userData } = useAuth()
     const handleAddProduct = () => {
         setCurrentView('add');
     };
@@ -64,6 +65,7 @@ const ProductManagement = ({ isSidebarOpen }) => {
             isSidebarOpen={isSidebarOpen}
             onAddProduct={handleAddProduct}
             onEditProduct={handleEditProduct}
+            userId={userData?.uid}
         />
     );
 };

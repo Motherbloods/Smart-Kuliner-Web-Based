@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Search, X, Star, ArrowLeft, SlidersHorizontal, ChevronDown, ChevronUp } from 'lucide-react';
 import productService from '../services/ProductServices';
 import ProductGrid from '../components/ProductGrid';
+import { useAuth } from '../hooks/useAuth';
 
 const ProductSearchPage = () => {
     const navigate = useNavigate();
@@ -24,6 +25,7 @@ const ProductSearchPage = () => {
         price: true,
         rating: true
     });
+    const { userData } = useAuth();
 
     useEffect(() => {
         setIsLoading(true);
@@ -371,6 +373,7 @@ const ProductSearchPage = () => {
                                     onProductClick={handleProductClick}
                                     gridResponsive={showFilters ? 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3' : 'grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'}
                                     showBuyButton={true}
+                                    userId={userData?.uid}
                                 />
                                 {/* Empty State */}
                                 {filteredProducts.length === 0 && products.length > 0 && (

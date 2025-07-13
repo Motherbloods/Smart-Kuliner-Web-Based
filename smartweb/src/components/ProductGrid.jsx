@@ -9,7 +9,8 @@ const ProductGrid = ({
     gridResponsive = 'grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3',
     showBuyButton = true,
     isSeller,
-    className = ''
+    className = '',
+    userId
 }) => {
     const formatPrice = (price) => {
         return new Intl.NumberFormat('id-ID', {
@@ -117,8 +118,18 @@ const ProductGrid = ({
                                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
                                 onClick={(e) => {
                                     e.stopPropagation();
-                                    // Handle buy button click
+                                    const productId = product.id || product._id;
+                                    const deepLinkUrl = `smartkuliner://product/${productId}?userId=${userId}`;
+
+                                    window.location.href = deepLinkUrl;
+
+                                    // Optional fallback
+                                    setTimeout(() => {
+                                        alert("Aplikasi SmartKuliner belum terinstal. Silakan unduh terlebih dahulu.");
+                                        // window.location.href = 'https://example.com/smartkuliner.apk'; // jika ada link apk
+                                    }, 1500);
                                 }}
+
                             >
                                 <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Beli Sekarang</span>
