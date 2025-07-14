@@ -89,11 +89,13 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
                     </div>
 
                     {/* Brand only on tablet/desktop - REMOVED from mobile */}
-                    {/* <div className="md:hidden">
-                        <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
-                            SmartKuliner
-                        </h2>
-                    </div> */}
+                    {userData?.seller && (
+                        <div className="md:hidden">
+                            <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
+                                SmartKuliner
+                            </h2>
+                        </div>
+                    )}
                 </div>
 
                 {/* Search Bar & User Info */}

@@ -317,7 +317,7 @@ const Profile = () => {
                             </div>
                             <div className="flex-1">
                                 <h1 className="text-xl sm:text-2xl font-bold text-gray-900 break-words">
-                                    {userData.seller ? (sellerData?.namaToko || userData.name) : userData.name}
+                                    {userData.seller ? userData?.namaToko : userData.name}
                                 </h1>
                                 <p className="text-sm sm:text-base text-gray-600 mt-1">
                                     {userData.seller ? 'Seller' : 'User'} • Bergabung {formatDate(userData.createdAt)}
@@ -626,7 +626,7 @@ const Profile = () => {
                                                 placeholder="Masukkan nama toko"
                                             />
                                         ) : (
-                                            <p className="text-sm sm:text-base text-gray-900 break-words">{sellerData?.namaToko || '-'}</p>
+                                            <p className="text-sm sm:text-base text-gray-900 break-words">{userData?.namaToko || '-'}</p>
                                         )}
                                     </div>
                                     <div>

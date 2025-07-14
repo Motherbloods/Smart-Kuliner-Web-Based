@@ -118,27 +118,44 @@ const ProductGrid = ({
                                 className="w-full bg-gradient-to-r from-blue-600 to-blue-700 text-white py-3 rounded-xl font-semibold hover:from-blue-700 hover:to-blue-800 transition-all duration-200 shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 group"
                                 onClick={(e) => {
                                     e.stopPropagation();
+
                                     const productId = product.id || product._id;
-                                    const deepLinkUrl = `smartkuliner://product/${productId}?userId=${userId}`;
+                                    const quantity = 1;
 
-                                    window.location.href = deepLinkUrl;
+                                    const deepLinkUrl = `smartapp://checkout?productId=${productId}&qty=${quantity}&userId=${userId}`;
 
-                                    // Optional fallback
+                                    try {
+                                        window.location.href = deepLinkUrl;
+                                        console.log('Opening deep link:', deepLinkUrl);
+                                        console.log('ADB equivalent command:', `adb shell am start -a android.intent.action.VIEW -d "${deepLinkUrl}" com.example.smart`);
+                                    } catch (error) {
+                                        console.error('Error opening deep link:', error);
+                                        alert("Tidak dapat membuka aplikasi. Pastikan SmartKuliner sudah terinstal di perangkat Anda.");
+                                    }
+
                                     setTimeout(() => {
-                                        alert("Aplikasi SmartKuliner belum terinstal. Silakan unduh terlebih dahulu.");
-                                        // window.location.href = 'https://example.com/smartkuliner.apk'; // jika ada link apk
-                                    }, 1500);
-                                }}
+                                        if (document.hasFocus()) {
+                                            console.log('Deep link mungkin tidak berhasil membuka aplikasi');
 
+                                            const wantsDownload = window.confirm("Aplikasi SmartKuliner tidak terdeteksi. Apakah Anda ingin mengunduhnya?");
+                                            if (wantsDownload) {
+                                                window.open('https://drive.google.com/uc?export=download&id=1zcUnpuuBIbGiMmNMHySRq5Ay7p01o8PL', '_blank');
+                                            }
+                                        }
+                                    }, 1000);
+
+                                }}
                             >
                                 <ShoppingCart className="h-4 w-4 group-hover:scale-110 transition-transform duration-200" />
                                 <span>Beli Sekarang</span>
                             </button>
+
                         )}
                     </div>
                 </div>
-            ))}
-        </div>
+            ))
+            }
+        </div >
     );
 };
 
