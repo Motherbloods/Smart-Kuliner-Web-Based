@@ -7,4 +7,14 @@ export default defineConfig({
   server: {
     historyApiFallback: true,
   },
+  // Untuk production build
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: undefined,
+      },
+    },
+  },
+  // Tambahkan base jika diperlukan
+  base: "/",
 });
