@@ -275,7 +275,7 @@ const ProductSearchPage = () => {
                                                 <div className="flex items-center space-x-2">
                                                     <input
                                                         type="number"
-                                                        value={priceRange[0]}
+                                                        value={priceRange[0] === 0 ? '' : priceRange[0]}
                                                         onChange={(e) => setPriceRange([parseInt(e.target.value) || 0, priceRange[1]])}
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                                         placeholder="Min"
@@ -283,8 +283,8 @@ const ProductSearchPage = () => {
                                                     <span className="text-gray-500">-</span>
                                                     <input
                                                         type="number"
-                                                        value={priceRange[1]}
-                                                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 100000])}
+                                                        value={priceRange[1] === 0 ? '' : priceRange[1]}
+                                                        onChange={(e) => setPriceRange([priceRange[0], parseInt(e.target.value) || 0])}
                                                         className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm"
                                                         placeholder="Max"
                                                     />
