@@ -23,10 +23,23 @@ export const AuthProvider = ({ children }) => {
                         dispatch({ type: 'SET_LOADING', payload: false });
                     } catch (error) {
                         console.error('[ERROR] Gagal mengambil data user:', error);
-                        // Jika gagal mengambil data user, tetap set loading false
-                        // dan biarkan user tetap login (Firebase Auth berhasil)
-                        dispatch({ type: 'SET_LOADING', payload: false });
-                        dispatch({ type: 'SET_ERROR', payload: error.message });
+
+                        // PERBAIKAN: Jika data user tidak ditemukan di Firestore
+                        // tapi masih login di Firebase Auth, logout paksa user
+                        if (error.message.includes('Data user tidak ditemukan')) {
+                            console.log('[INFO] Data user tidak ditemukan, melakukan logout paksa...');
+                            try {
+                                await authService.logout();
+                                dispatch({ type: 'CLEAR_AUTH' });
+                            } catch (logoutError) {
+                                console.error('[ERROR] Gagal logout paksa:', logoutError);
+                                dispatch({ type: 'CLEAR_AUTH' });
+                            }
+                        } else {
+                            // Untuk error lain, tetap set loading false dan tampilkan error
+                            dispatch({ type: 'SET_LOADING', payload: false });
+                            dispatch({ type: 'SET_ERROR', payload: error.message });
+                        }
                     }
                 } else {
                     dispatch({ type: 'CLEAR_AUTH' });

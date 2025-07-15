@@ -273,6 +273,9 @@ export const authService = {
             }
         } catch (error) {
             console.error('[ERROR] Gagal mengambil data user:', error);
+            if (error instanceof Error) {
+                throw error;
+            }
             throw new Error(error.message || 'Gagal mengambil data user');
         }
     },
