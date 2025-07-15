@@ -11,12 +11,18 @@ import {
     LogIn,
     ListOrdered,
     ArrowLeft,
+    UserPlus,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import { useNavigate } from 'react-router-dom';
 
 export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen, onMobileMenuToggle }) => {
     const [isOpen, setIsOpen] = useState(true);
-    const { userRole } = useAuth();
+    const { userRole, user } = useAuth();
+    const navigate = useNavigate();
+
+    // Check if user is guest (not logged in)
+    const isGuest = !user;
 
     const handleToggle = () => {
         const newState = !isOpen;
@@ -36,7 +42,16 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
         return () => document.removeEventListener('mousedown', handleClickOutside);
     }, [isMobileMenuOpen, onMobileMenuToggle]);
 
-    // Menu khusus user biasa
+    // Menu for guest users (not logged in)
+    const guestMenuItems = [
+        { id: 'products', label: 'Produk Kuliner', icon: UtensilsCrossed },
+        { id: 'konten', label: 'Konten', icon: MonitorPlay },
+        { id: 'resep', label: 'Resep', icon: FileText },
+        { id: 'login', label: 'Login', icon: LogIn },
+        { id: 'register', label: 'Daftar', icon: UserPlus },
+    ];
+
+    // Menu for regular users (buyers)
     const userMenuItems = [
         { id: 'products', label: 'Produk Kuliner', icon: UtensilsCrossed },
         { id: 'konten', label: 'Konten', icon: MonitorPlay },
@@ -45,7 +60,7 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
         { id: 'logout', label: 'Logout', icon: LogOut },
     ];
 
-    // Menu untuk seller
+    // Menu for sellers
     const sellerMenuItems = [
         { id: 'dashboard', label: 'Dashboard', icon: Home },
         { id: 'order', label: 'Order List', icon: ListOrdered },
@@ -56,11 +71,32 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
         { id: 'logout', label: 'Logout', icon: LogOut },
     ];
 
-    // Tentukan menu yang digunakan
-    const menuItems = userRole == 'seller' ? sellerMenuItems : userMenuItems;
+    // Determine which menu to use
+    const getMenuItems = () => {
+        console.log(isGuest, userRole)
+        if (isGuest) {
+            return guestMenuItems;
+        }
+        return userRole === 'seller' ? sellerMenuItems : userMenuItems;
+    };
+
+    const menuItems = getMenuItems();
 
     const handleMenuClick = (itemId) => {
+        // Handle special menu items for guests
+        if (isGuest) {
+            if (itemId === 'login') {
+                navigate('/login');
+                return;
+            }
+            if (itemId === 'register') {
+                navigate('/register');
+                return;
+            }
+        }
+
         setActiveMenu(itemId);
+
         // Close mobile menu after selection
         if (isMobileMenuOpen) {
             onMobileMenuToggle();
@@ -130,15 +166,18 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
                     })}
                 </nav>
 
-                {/* Version Info */}
+                {/* Status Info */}
                 {isOpen && (
                     <div className="px-4 py-3 border-t border-gray-700/50">
+                        <div className="text-center text-xs text-gray-500 mb-1">
+                            {isGuest ? 'Mode Tamu' : 'Logged In'}
+                        </div>
                         <div className="text-center text-xs text-gray-600">© 2024 SmartKuliner</div>
                     </div>
                 )}
             </div>
 
-            {/* Mobile Sidebar - Full Height dengan z-index tinggi, tanpa overlay background */}
+            {/* Mobile Sidebar */}
             <div
                 className={`mobile-sidebar fixed top-0 left-0 w-64 h-full text-white z-50 transform transition-transform duration-300 lg:hidden ${isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
                     } overflow-y-auto flex flex-col`}
@@ -176,7 +215,7 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
                                     }`}
                             >
                                 <Icon
-                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400 group-hover:text-white'
+                                    className={`h-5 w-5 ${isActive ? 'text-white' : 'text-gray-400'
                                         }`}
                                 />
                                 <span className="ml-3 text-sm font-medium">{item.label}</span>
@@ -190,8 +229,11 @@ export const Sidebar = ({ activeMenu, setActiveMenu, onToggle, isMobileMenuOpen,
                     })}
                 </nav>
 
-                {/* Mobile Version Info - Positioned at bottom */}
+                {/* Mobile Status Info */}
                 <div className="px-4 py-3 border-t border-gray-700/50 mt-auto">
+                    <div className="text-center text-xs text-gray-500 mb-1">
+                        {isGuest ? 'Mode Tamu' : 'Logged In'}
+                    </div>
                     <div className="text-center text-xs text-gray-600">© 2024 SmartKuliner</div>
                 </div>
             </div>

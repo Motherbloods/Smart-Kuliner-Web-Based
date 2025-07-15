@@ -4,33 +4,49 @@ import KontenPage from "./Konten";
 import ProductManagement from "./ProductManagement";
 import Profile from "./Profile";
 import RecipePage from "./Resep";
-import authService from "../services/AuthServices";
 import Dashboard from "./Dashboard";
 import RecipeManagement from "./RecipeManagement";
 import KontenManagement from "./KontenManagement";
 import OrderList from "./OrderList";
 import { useAuth } from "../hooks/useAuth";
+import GuestProductList from "./GuestProductList"; // Component baru untuk guest
 
 export const PageContent = ({ activeMenu, isSidebarOpen }) => {
     const navigate = useNavigate();
+    const { logout } = useAuth();
     const [currentUser, setCurrentUser] = useState(null);
 
-    const { userData } = useAuth();
-    useEffect(() => {
-        // Get current user data
-        setCurrentUser(userData);
+    const { userData, user } = useAuth();
+    const isGuest = !user;
 
-        if (activeMenu === "logout") {
+    const [hasLoggedOut, setHasLoggedOut] = useState(false);
+
+    useEffect(() => {
+        if (activeMenu === "logout" && !hasLoggedOut) {
+            setHasLoggedOut(true); // mencegah efek dipanggil ulang
             const confirmLogout = window.confirm("Apakah kamu yakin ingin logout?");
             if (confirmLogout) {
-                authService.logout().then(() => {
-                    navigate("/login");
+                logout().then(() => {
+                    navigate("/");
                 });
             } else {
-                navigate("/"); // Kembali ke home atau dashboard jika dibatalkan
+                navigate("/");
             }
         }
-    }, [activeMenu, navigate, userData]);
+    }, [activeMenu, hasLoggedOut, navigate, logout]);
+
+    useEffect(() => {
+        setCurrentUser(userData);
+
+        if (isGuest) {
+            if (activeMenu === "login") {
+                navigate("/login");
+            } else if (activeMenu === "register") {
+                navigate("/register");
+            }
+        }
+    }, [activeMenu, navigate, userData, user, isGuest]);
+
 
     // Handler untuk update status order
     const handleUpdateOrderStatus = (orderId, newStatus) => {
@@ -40,6 +56,22 @@ export const PageContent = ({ activeMenu, isSidebarOpen }) => {
     };
 
     const renderContent = () => {
+        // Guest content rendering
+        if (isGuest) {
+            switch (activeMenu) {
+                case 'products':
+                    return <GuestProductList isSidebarOpen={isSidebarOpen} />;
+                case 'konten':
+                    return <KontenPage isSidebarOpen={isSidebarOpen} />;
+                case 'resep':
+                    return <RecipePage isSidebarOpen={isSidebarOpen} />;
+                default:
+                    // Default untuk guest adalah products
+                    return <GuestProductList isSidebarOpen={isSidebarOpen} />;
+            }
+        }
+
+        // Logged-in user content rendering
         switch (activeMenu) {
             case 'products':
                 return <ProductManagement isSidebarOpen={isSidebarOpen} />;

@@ -18,10 +18,14 @@ const DashboardLayout = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
-  // Set default activeMenu setelah userData tersedia
+  // Set default activeMenu based on user role
   useEffect(() => {
-    if (userData && isInitialized) {
-      setActiveMenu(userData.seller ? "dashboard" : "products");
+    if (isInitialized) {
+      if (userData?.seller) {
+        setActiveMenu("dashboard");
+      } else {
+        setActiveMenu("products");
+      }
     }
   }, [userData, isInitialized]);
 
@@ -45,20 +49,20 @@ const DashboardLayout = () => {
   useEffect(() => {
     const handleClickOutside = (event) => {
       if (!event.target.closest(".dropdown-container")) {
-        // Close dropdown (opsional)
+        // Close dropdown (optional)
       }
     };
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  // Tampilkan loading state sampai auth selesai diinisialisasi dan userData tersedia
-  if (!isInitialized || loading || (isInitialized && !userData)) {
+  // Show loading only while auth is initializing
+  if (!isInitialized || loading) {
     return (
       <div className="min-h-screen flex items-center justify-center px-4">
         <div className="flex flex-col items-center space-y-4">
           <div className="animate-spin rounded-full h-8 w-8 lg:h-12 lg:w-12 border-b-2 border-blue-600"></div>
-          <div className="text-gray-600 text-sm lg:text-lg text-center">Memuat data pengguna...</div>
+          <div className="text-gray-600 text-sm lg:text-lg text-center">Memuat aplikasi...</div>
         </div>
       </div>
     );
@@ -89,7 +93,7 @@ export function App() {
     <AuthProvider>
       <Router>
         <Routes>
-          {/* Public Routes */}
+          {/* Public Routes - Only accessible when not logged in */}
           <Route
             path="/login"
             element={
@@ -114,31 +118,23 @@ export function App() {
               </PublicRoute>
             }
           />
-
-          {/* Protected Routes */}
           <Route
             path="/product-search"
             element={
-              <ProtectedRoute allowedRoles={['buyer']}>
+              <ProtectedRoute allowedRoles={['buyer', 'guest']}>
                 <ProductSearchPage />
               </ProtectedRoute>
             }
           />
+
+          {/* Main Dashboard Routes - Accessible by everyone (including guests) */}
           <Route
             path="/"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
+            element={<DashboardLayout />}
           />
           <Route
             path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardLayout />
-              </ProtectedRoute>
-            }
+            element={<DashboardLayout />}
           />
 
           <Route path="*" element={<Navigate to="/" replace />} />

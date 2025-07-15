@@ -2,10 +2,9 @@ import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-export const ProtectedRoute = ({ children, allowedRoles }) => {
-    const { userData, loading, isInitialized } = useAuth();
+export const ProtectedRoute = ({ children, allowedRoles, requireAuth = false }) => {
+    const { userData, loading, isInitialized, user } = useAuth();
 
-    // Tampilkan loading jika auth belum diinisialisasi
     if (!isInitialized || loading) {
         return (
             <div className="min-h-screen flex items-center justify-center">
@@ -17,18 +16,23 @@ export const ProtectedRoute = ({ children, allowedRoles }) => {
         );
     }
 
-    // Redirect ke login jika tidak ada userData
-    if (!userData) {
+    const isSeller = userData?.seller;
+    const userRole = user ? (isSeller ? 'seller' : 'buyer') : 'guest';
+
+    // Jika requireAuth dan belum login, redirect ke login
+    if (requireAuth && !user) {
         return <Navigate to="/login" replace />;
     }
 
-    if (allowedRoles?.length) {
-        const isSeller = userData?.seller;
-        const userRole = isSeller ? 'seller' : 'buyer';
-        console.log(isSeller, userRole)
-        if (!allowedRoles.includes(userRole)) {
-            return <Navigate to="/" replace />;
+    // Jika ada pembatasan role, dan role user saat ini tidak termasuk, redirect
+    if (allowedRoles?.length && !allowedRoles.includes(userRole)) {
+        // Guest tidak diizinkan
+        if (!user && !allowedRoles.includes('guest')) {
+            return <Navigate to="/login" replace />;
         }
+
+        // Sudah login tapi role tidak sesuai
+        return <Navigate to="/" replace />;
     }
 
     return children;

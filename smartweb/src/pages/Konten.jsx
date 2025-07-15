@@ -2,7 +2,12 @@ import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import {
     Play, Eye, Heart, Clock, User, Calendar, Tag, X,
     ChevronLeft, ChevronRight, RefreshCw, Search, Filter,
-    AlertCircle, Loader2, Plus, Edit3, Trash2
+    AlertCircle, Loader2, Plus, Edit3, Trash2,
+    LogIn,
+    Sparkles,
+    TrendingUp,
+    Star,
+    UserPlus
 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
 import { MainKontenService } from "../services/Index.js"
@@ -11,9 +16,11 @@ import VideoCard from '../components/VideoCard.jsx';
 import LoadingCard from '../components/shared/LoadingCard.jsx';
 import ErrorDisplay from '../components/shared/ErrorDisplay.jsx';
 import { categoryFilterOptions } from '../utils/categories.js';
+import { useNavigate } from 'react-router-dom';
 
 const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSeller }) => {
     // State Management
+    const navigate = useNavigate()
     const [activeTab, setActiveTab] = useState('edukasi');
     const { userData } = useAuth();
     const [edukasiData, setEdukasiData] = useState([]);
@@ -159,7 +166,7 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
             const type = activeTab === 'edukasi' ? 'edukasi' : 'konten';
 
             // Hanya tambahkan view jika bukan seller
-            if (!isSeller) {
+            if (!isSeller && userData?.uid) {
                 await MainKontenService.addView(item.id, type);
 
                 // Update view count in state
@@ -372,79 +379,148 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
         </div>
     ));
 
+    // Guest Welcome Banner Component
+    // Guest Welcome Banner Component
+    const GuestWelcomeBanner = () => (
+        <div className="bg-gradient-to-r from-blue-800 to-indigo-800 rounded-2xl shadow-2xl p-8 text-center text-white mb-10 relative overflow-hidden">
+            {/* Decorative glowing orb */}
+            <div className="absolute -top-10 -left-10 w-40 h-40 bg-white opacity-10 rounded-full blur-2xl animate-pulse pointer-events-none" />
+
+            {/* Badge */}
+            <div className="inline-flex items-center px-4 py-1 rounded-full bg-white/10 mb-4 text-sm font-medium tracking-wide">
+                <Sparkles className="w-4 h-4 text-yellow-300 mr-2" />
+                Platform Kuliner Premium
+            </div>
+
+            {/* Main Heading */}
+            <h1 className="text-3xl md:text-5xl font-extrabold leading-tight mb-4">
+                Selamat Datang di{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-orange-300 to-red-400">
+                    SmartKuliner
+                </span>
+            </h1>
+
+            {/* Subtext */}
+            <p className="text-blue-100 text-base md:text-lg max-w-xl mx-auto mb-6">
+                Eksplorasi konten edukasi dan penawaran menarik tanpa perlu login.
+            </p>
+
+            {/* Buttons */}
+            <div className="flex flex-col sm:flex-row justify-center items-center gap-4">
+                <button
+                    onClick={() => navigate('/login')}
+                    className="bg-white text-blue-800 px-6 py-2.5 rounded-xl font-semibold shadow hover:bg-blue-50 transition"
+                >
+                    <LogIn className="inline w-4 h-4 mr-2" />
+                    Masuk
+                </button>
+                <button
+                    onClick={() => navigate('/register')}
+                    className="border border-white/40 text-white px-6 py-2.5 rounded-xl font-semibold hover:bg-white/10 transition"
+                >
+                    <UserPlus className="inline w-4 h-4 mr-2" />
+                    Daftar
+                </button>
+            </div>
+
+            {/* Guest mode badge */}
+            <div className="mt-5 text-xs text-blue-200">
+                <div className="inline-flex items-center bg-white/10 px-3 py-1 rounded-full">
+                    <div className="w-2 h-2 bg-green-400 rounded-full animate-ping mr-2"></div>
+                    Mode Tamu Aktif – Akses terbatas
+                </div>
+            </div>
+        </div>
+    );
+
+
     return (
-        <div className={`min-h-screen bg-gradient-to-br from-gray-50 to-blue-50 transition-all duration-300
-            }`}>
+        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Header */}
+                {/* Regular Header for logged in users */}
                 <div className="text-center mb-8">
                     <h1 className="text-4xl font-bold text-gray-800 mb-2">
-                        Konten <span className="text-blue-600">SmartKuliner</span>
+                        {userData?.uid ? (
+                            <>
+                                Konten <span className="text-blue-600">SmartKuliner</span>
+                            </>
+                        ) : (
+                            <>
+                                Selamat Datang di <span className="text-blue-600">SmartKuliner</span>
+                            </>
+                        )}
                     </h1>
                     <p className="text-gray-600 text-lg">
-                        Jelajahi konten edukasi dan promosi dari berbagai toko kuliner
+                        {userData?.uid
+                            ? 'Jelajahi konten edukasi dan promosi dari berbagai toko kuliner'
+                            : 'Nikmati berbagai informasi kuliner menarik tanpa perlu login'}
                     </p>
                 </div>
 
+
                 {/* Tab Navigation */}
-                <div className="flex justify-center mb-8">
-                    <div className="bg-white rounded-xl p-2 shadow-lg">
+                <div className="flex justify-center mb-10">
+                    <div className="inline-flex bg-white/80 backdrop-blur-sm rounded-full shadow-xl border border-white/30 overflow-hidden">
                         <button
                             onClick={() => handleTabChange('edukasi')}
-                            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${activeTab === 'edukasi'
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                            className={`px-6 py-2 text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === 'edukasi'
+                                ? 'bg-blue-600 text-white'
+                                : 'text-gray-700 hover:bg-blue-50'
                                 }`}
                         >
-                            📚 Edukasi
+                            <Play className="h-4 w-4" />
+                            <span>Edukasi</span>
                         </button>
                         <button
                             onClick={() => handleTabChange('promosi')}
-                            className={`px-6 py-3 rounded-lg font-semibold transition-all duration-300 ${activeTab === 'promosi'
-                                ? 'bg-blue-600 text-white shadow-lg'
-                                : 'text-gray-600 hover:text-blue-600 hover:bg-blue-50'
+                            className={`px-6 py-2 text-sm font-semibold transition-all duration-300 flex items-center gap-2 ${activeTab === 'promosi'
+                                ? 'bg-green-600 text-white'
+                                : 'text-gray-700 hover:bg-green-50'
                                 }`}
                         >
-                            🎯 Promosi
+                            <Tag className="h-4 w-4" />
+                            <span>Promosi</span>
                         </button>
                     </div>
                 </div>
 
                 {/* Add Content Button - Using props */}
-                {userData?.seller && <div className="flex justify-end mb-6">
-                    <button
-                        onClick={handleAddNewContent}
-                        className={`inline-flex items-center px-6 py-3 rounded-lg font-semibold transition-colors shadow-lg ${activeTab === 'edukasi'
-                            ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                            : 'bg-green-600 hover:bg-green-700 text-white'
-                            }`}
-                    >
-                        <Plus className="h-5 w-5 mr-2" />
-                        Tambah {activeTab === 'edukasi' ? 'Edukasi' : 'Promosi'}
-                    </button>
-                </div>}
+                {userData?.seller && (
+                    <div className="flex justify-end mb-6">
+                        <button
+                            onClick={handleAddNewContent}
+                            className={`inline-flex items-center px-6 py-3 rounded-xl font-semibold transition-all duration-300 shadow-lg transform hover:scale-105 ${activeTab === 'edukasi'
+                                ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white'
+                                : 'bg-gradient-to-r from-green-600 to-green-700 hover:from-green-700 hover:to-green-800 text-white'
+                                }`}
+                        >
+                            <Plus className="h-5 w-5 mr-2" />
+                            Tambah {activeTab === 'edukasi' ? 'Edukasi' : 'Promosi'}
+                        </button>
+                    </div>
+                )}
 
                 {/* Search and Filter Bar */}
-                <div className="bg-white rounded-xl shadow-lg p-6 mb-8">
+                <div className="bg-white/80 backdrop-blur-sm rounded-2xl shadow-xl p-6 mb-8 border border-white/20">
                     <div className="flex flex-col md:flex-row gap-4">
                         {/* Search */}
                         <div className="relative flex-1">
-                            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
                             <input
                                 type="text"
-                                placeholder="Cari konten..."
+                                placeholder="Cari konten kuliner..."
                                 value={searchQuery}
                                 onChange={(e) => setSearchQuery(e.target.value)}
-                                className="w-full pl-10 pr-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                className="w-full pl-12 pr-4 py-4 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white/50 backdrop-blur-sm transition-all duration-300 text-gray-800 placeholder-gray-500"
                             />
                         </div>
 
                         {/* Filter Toggle */}
                         <button
                             onClick={() => setShowFilters(!showFilters)}
-                            className={`flex items-center space-x-2 px-4 py-3 rounded-lg transition-colors ${showFilters
-                                ? 'bg-blue-100 text-blue-600'
-                                : 'bg-gray-100 hover:bg-gray-200'
+                            className={`flex items-center space-x-2 px-6 py-4 rounded-xl transition-all duration-300 font-medium ${showFilters
+                                ? 'bg-blue-100 text-blue-700 shadow-lg'
+                                : 'bg-gray-100 hover:bg-gray-200 text-gray-700'
                                 }`}
                         >
                             <Filter className="h-5 w-5" />
@@ -453,11 +529,11 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
 
                         {/* Active filters indicator */}
                         {(searchQuery || filters.category) && (
-                            <div className="flex items-center space-x-2 px-3 py-2 bg-blue-50 text-blue-600 rounded-lg text-sm">
+                            <div className="flex items-center space-x-2 px-4 py-2 bg-blue-50 text-blue-700 rounded-xl text-sm font-medium border border-blue-200">
                                 <span>Filter aktif</span>
                                 <button
                                     onClick={resetFilters}
-                                    className="text-blue-600 hover:text-blue-800"
+                                    className="text-blue-600 hover:text-blue-800 transition-colors"
                                 >
                                     <X className="h-4 w-4" />
                                 </button>
@@ -467,16 +543,16 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
 
                     {/* Filter Options */}
                     {showFilters && (
-                        <div className="mt-4 pt-4 border-t border-gray-200">
+                        <div className="mt-6 pt-6 border-t border-gray-200">
                             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Kategori
                                     </label>
                                     <select
                                         value={filters.category}
                                         onChange={(e) => handleFilterChange('category', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/50 backdrop-blur-sm transition-all duration-300"
                                     >
                                         {categoryFilterOptions.map(cat => (
                                             <option key={cat.value} value={cat.value}>
@@ -487,13 +563,13 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
                                 </div>
 
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                                    <label className="block text-sm font-semibold text-gray-700 mb-2">
                                         Urutkan
                                     </label>
                                     <select
                                         value={filters.sortBy}
                                         onChange={(e) => handleFilterChange('sortBy', e.target.value)}
-                                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        className="w-full px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white/50 backdrop-blur-sm transition-all duration-300"
                                     >
                                         {sortOptions.map(option => (
                                             <option key={option.value} value={option.value}>
@@ -506,7 +582,7 @@ const Konten = ({ onAddEdukasi, onAddKonten, onEditKonten, onEditEdukasi, isSell
                                 <div className="flex items-end">
                                     <button
                                         onClick={resetFilters}
-                                        className="w-full px-4 py-2 bg-red-100 text-red-600 rounded-lg hover:bg-red-200 transition-colors"
+                                        className="w-full px-4 py-3 bg-red-100 text-red-700 rounded-xl hover:bg-red-200 transition-all duration-300 font-medium shadow-lg transform hover:scale-105"
                                     >
                                         Reset Filter
                                     </button>

@@ -1,24 +1,32 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle, Menu, X } from 'lucide-react';
+import { Search, Bell, User, ChevronDown, Settings, LogOut, MessageCircle, Menu, X, LogIn } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
 
 export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobileMenuOpen }) => {
     const navigate = useNavigate();
     const [searchQuery, setSearchQuery] = useState('');
     const [isSearchFocused, setIsSearchFocused] = useState(false);
-    const { userData, loading } = useAuth();
+    const { userData, loading, user } = useAuth();
+
+    // Check if user is guest (not logged in)
+    const isGuest = !user;
 
     const getPageTitle = (menu) => {
         switch (menu) {
             case 'products': return 'Produk Unggulan';
             case 'konten': return 'Konten Promosi';
             case 'informasi-pengguna': return 'Informasi Pengguna';
-            default: return 'Dashboard';
+            case 'dashboard': return 'Dashboard';
+            default: return 'SmartKuliner';
         }
     };
 
     const getDisplayName = () => {
+        if (isGuest) {
+            return 'Guest';
+        }
+
         if (loading) {
             return 'Memuat...';
         }
@@ -27,7 +35,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
             return 'Memuat...';
         }
 
-        // Prioritas: name > namaToko > email
+        // Priority: name > namaToko > email
         if (userData.name) {
             return capitalize(userData.name);
         }
@@ -40,23 +48,46 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
             return userData.email.split('@')[0];
         }
 
-        return 'Memuat...';
+        return 'Guest';
+    };
+
+    const getUserRole = () => {
+        if (isGuest) {
+            return 'Tamu';
+        }
+
+        if (loading) {
+            return 'Memuat...';
+        }
+
+        return userData?.seller ? "Seller" : "Pembeli";
     };
 
     // Function to handle search
     const handleSearch = (e) => {
         e.preventDefault();
         if (searchQuery.trim()) {
-            // Navigate to product search page with query parameter
-            navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            if (isGuest) {
+                navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            } else {
+                navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            }
         }
     };
 
     // Function to handle search icon click
     const handleSearchIconClick = () => {
         if (searchQuery.trim()) {
-            navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            if (isGuest) {
+                navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            } else {
+                navigate(`/product-search?q=${encodeURIComponent(searchQuery.trim())}`);
+            }
         }
+    };
+
+    const handleLoginClick = () => {
+        navigate('/login');
     };
 
     const capitalize = (str) => {
@@ -88,7 +119,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
                         </span>
                     </div>
 
-                    {/* Brand only on tablet/desktop - REMOVED from mobile */}
+                    {/* Brand only on tablet/desktop for sellers */}
                     {userData?.seller && (
                         <div className="md:hidden">
                             <h2 className="text-lg font-bold bg-gradient-to-r from-gray-800 to-gray-600 bg-clip-text text-transparent">
@@ -100,7 +131,7 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
 
                 {/* Search Bar & User Info */}
                 <div className="flex items-center space-x-2 lg:space-x-4">
-                    {/* Search Bar - Responsive */}
+                    {/* Search Bar - Available for all users (guest and non-seller) */}
                     {!userData?.seller && (
                         <form onSubmit={handleSearch} className="relative">
                             <div className={`relative transition-all duration-200 ${isSearchFocused ? 'scale-105' : ''}`}>
@@ -129,22 +160,42 @@ export const Navbar = ({ activeMenu, isSidebarOpen, onMobileMenuToggle, isMobile
                         </form>
                     )}
 
-                    {/* User Avatar - Mobile Responsive */}
+                    {/* User Avatar/Login Button */}
                     <div className="relative">
-                        <button className="flex items-center space-x-2 lg:space-x-3 p-1.5 lg:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg lg:rounded-xl transition-all duration-200">
-                            <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
-                                <User className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
-                            </div>
-                            {/* User info - Hidden on small screens */}
-                            <div className="hidden sm:block text-left">
-                                <div className="text-xs lg:text-sm font-semibold text-gray-800">
-                                    {getDisplayName()}
+                        {isGuest ? (
+                            /* Login Button for Guest */
+                            <button
+                                onClick={handleLoginClick}
+                                className="flex items-center space-x-2 lg:space-x-3 p-1.5 lg:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg lg:rounded-xl transition-all duration-200 border border-gray-200 hover:border-blue-300"
+                            >
+                                <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-gray-500 to-gray-600 rounded-full flex items-center justify-center shadow-lg">
+                                    <LogIn className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
                                 </div>
-                                <div className="text-xs text-gray-500">
-                                    {loading ? 'Memuat...' : (userData?.seller ? "Seller" : "Pembeli")}
+                                <div className="hidden sm:block text-left">
+                                    <div className="text-xs lg:text-sm font-semibold text-gray-800">
+                                        Login
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                        Masuk sekarang
+                                    </div>
                                 </div>
-                            </div>
-                        </button>
+                            </button>
+                        ) : (
+                            /* User Avatar for Logged-in Users */
+                            <button className="flex items-center space-x-2 lg:space-x-3 p-1.5 lg:p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg lg:rounded-xl transition-all duration-200">
+                                <div className="w-7 h-7 lg:w-8 lg:h-8 bg-gradient-to-br from-blue-600 to-blue-700 rounded-full flex items-center justify-center shadow-lg">
+                                    <User className="h-3 w-3 lg:h-4 lg:w-4 text-white" />
+                                </div>
+                                <div className="hidden sm:block text-left">
+                                    <div className="text-xs lg:text-sm font-semibold text-gray-800">
+                                        {getDisplayName()}
+                                    </div>
+                                    <div className="text-xs text-gray-500">
+                                        {getUserRole()}
+                                    </div>
+                                </div>
+                            </button>
+                        )}
                     </div>
                 </div>
             </div>

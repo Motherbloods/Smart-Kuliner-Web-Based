@@ -37,21 +37,31 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
 
+    // Helper function to check if user is logged in
+    const isLoggedIn = () => {
+        return currentUserId != null && currentUserId !== undefined && currentUserId !== '';
+    };
+
+    // Helper function to check if user is seller
+    const isSellerUser = () => {
+        return isSeller === true && isLoggedIn();
+    };
+
     // Load recipes from Firebase with like status
     useEffect(() => {
-        console.log('ini cure', currentUserId)
-        if (currentUserId) {
+        if (isLoggedIn()) {
             loadRecipesWithLikeStatus();
         } else {
             loadRecipes();
         }
-    }, [currentUserId]);
+    }, [currentUserId, isSeller]);
 
     const loadRecipesWithLikeStatus = async () => {
         try {
             setLoading(true);
             setError(null);
-            const result = await getAllRecipesWithLikeStatus(currentUserId, isSeller);
+            const result = await getAllRecipesWithLikeStatus(currentUserId, isSellerUser());
+            console.log('ini current', currentUserId);
             if (result.success) {
                 setRecipes(result.data);
                 // Update liked recipes set - pastikan sinkronisasi
@@ -74,9 +84,11 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
         try {
             setLoading(true);
             setError(null);
-            console.log(isSeller)
-            // Tentukan fungsi yang dipanggil berdasarkan peran pengguna
-            const result = isSeller
+            console.log('isSeller:', isSeller);
+
+            // Untuk guest user, selalu load semua resep
+            // Untuk seller yang login, load resep mereka sendiri
+            const result = isSellerUser()
                 ? await getRecipesBySeller(currentUserId)
                 : await getAllRecipes();
 
@@ -108,7 +120,8 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
     });
 
     const toggleFavorite = async (recipeId) => {
-        if (!currentUserId) {
+        // Check if user is logged in
+        if (!isLoggedIn()) {
             setError('Silakan login untuk menambahkan ke favorit');
             return;
         }
@@ -232,9 +245,15 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
 
     const handleRecipeClick = async (recipe) => {
         setSelectedRecipe(recipe);
-        console.log(isSeller)
-        if (isSeller) return;
-        // Increment view count
+        console.log('isSeller:', isSeller);
+
+        // Hanya increment view count jika user bukan seller dan user login
+        // Guest user tidak menambah view count
+        if (isSellerUser() || !isLoggedIn()) {
+            return;
+        }
+
+        // Increment view count hanya untuk user biasa yang login
         try {
             const result = await incrementViewCount(recipe.id);
             if (result.success) {
@@ -298,7 +317,7 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                         {error}
                     </div>
                     <button
-                        onClick={currentUserId ? loadRecipesWithLikeStatus : loadRecipes}
+                        onClick={isLoggedIn() ? loadRecipesWithLikeStatus : loadRecipes}
                         className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
                     >
                         Coba Lagi
@@ -327,20 +346,21 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                 <h1 className="text-xl font-semibold text-gray-900">Detail Resep</h1>
                             </div>
                             <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-
-                                {!isSeller &&
+                                {/* Show favorite button only for logged in non-seller users */}
+                                {isLoggedIn() && !isSellerUser() && (
                                     <button
                                         onClick={() => toggleFavorite(selectedRecipe.id)}
                                         className={`p-2 rounded-full transition-colors ${isRecipeLiked(selectedRecipe.id)
                                             ? 'bg-red-100 text-red-600 hover:bg-red-200'
                                             : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                                             }`}
-                                        disabled={!currentUserId}
-                                        title={!currentUserId ? 'Login untuk menambahkan ke favorit' : ''}
                                     >
                                         <Heart className={`h-5 w-5 ${isRecipeLiked(selectedRecipe.id) ? 'fill-current' : ''}`} />
-                                    </button>}
-                                {currentUserId && isSeller && (
+                                    </button>
+                                )}
+
+                                {/* Show edit button only for seller users */}
+                                {isSellerUser() && (
                                     <button
                                         onClick={() => onEditRecipe(selectedRecipe)}
                                         className="p-2 bg-gray-100 text-gray-600 hover:bg-gray-200 rounded-full transition-colors"
@@ -447,19 +467,21 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
             {/* Header */}
             <div className="bg-white shadow-sm rounded-t-lg">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full">
-
                     <div className="flex items-center justify-between h-16">
                         <div className="flex items-center space-x-4">
                             <h1 className="text-2xl font-bold text-gray-900">Resep</h1>
                         </div>
                         <div className="flex flex-col sm:flex-row sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
-                            {isSeller && <button
-                                onClick={onAddRecipe}
-                                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-                            >
-                                <Plus className="h-4 w-4" />
-                                <span>Tambah Resep</span>
-                            </button>}
+                            {/* Show add recipe button only for seller users */}
+                            {isSellerUser() && (
+                                <button
+                                    onClick={onAddRecipe}
+                                    className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                                >
+                                    <Plus className="h-4 w-4" />
+                                    <span>Tambah Resep</span>
+                                </button>
+                            )}
                             <div className="flex bg-gray-100 rounded-lg p-1">
                                 <button
                                     onClick={() => setViewMode('grid')}
@@ -512,7 +534,6 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                             </div>
                         </div>
                     </div>
-
                 </div>
             </div>
 
@@ -533,7 +554,6 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                             <div
                                 key={recipe.id}
                                 className={`bg-white rounded-xl shadow-sm hover:shadow-md transition-shadow cursor-pointer overflow-hidden ${viewMode === 'list' ? 'flex space-x-4 p-4' : ''}`}
-
                                 onClick={() => handleRecipeClick(recipe)}
                             >
                                 {viewMode === 'grid' ? (
@@ -549,19 +569,21 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                                     {recipe.difficulty}
                                                 </span>
                                             </div>
-                                            {!isSeller && <button
-                                                onClick={(e) => {
-                                                    e.stopPropagation();
-                                                    toggleFavorite(recipe.id);
-                                                }}
-                                                className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${isRecipeLiked(recipe.id)
-                                                    ? 'bg-red-100 text-red-600'
-                                                    : 'bg-white/80 text-gray-600 hover:bg-white'
-                                                    }`}
-                                                disabled={!currentUserId}
-                                            >
-                                                <Heart className={`h-4 w-4 ${isRecipeLiked(recipe.id) ? 'fill-current' : ''}`} />
-                                            </button>}
+                                            {/* Show favorite button only for logged in non-seller users */}
+                                            {isLoggedIn() && !isSellerUser() && (
+                                                <button
+                                                    onClick={(e) => {
+                                                        e.stopPropagation();
+                                                        toggleFavorite(recipe.id);
+                                                    }}
+                                                    className={`absolute top-3 left-3 p-2 rounded-full transition-colors ${isRecipeLiked(recipe.id)
+                                                        ? 'bg-red-100 text-red-600'
+                                                        : 'bg-white/80 text-gray-600 hover:bg-white'
+                                                        }`}
+                                                >
+                                                    <Heart className={`h-4 w-4 ${isRecipeLiked(recipe.id) ? 'fill-current' : ''}`} />
+                                                </button>
+                                            )}
                                         </div>
                                         <div className="p-4">
                                             <h3 className="font-semibold text-gray-900 mb-2 line-clamp-2">{recipe.title}</h3>
@@ -577,7 +599,6 @@ const RecipePage = ({ onAddRecipe, onEditRecipe, currentUserId, isSeller }) => {
                                                         <span>{recipe.servings}</span>
                                                     </div>
                                                 </div>
-
                                             </div>
                                             <div className="flex items-center justify-between">
                                                 <span className="text-xs text-gray-500">{recipe.category}</span>
