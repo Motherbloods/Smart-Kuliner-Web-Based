@@ -21,6 +21,21 @@ import {
 import { firebaseApp } from '../config/firebase';
 
 const db = getFirestore(firebaseApp);
+const normalizePhoneNumber = (input) => {
+    let phone = input.replace(/[^\d+]/g, '');
+
+    if (!phone.startsWith('+')) {
+        if (phone.startsWith('0')) {
+            phone = '+62' + phone.substring(1);
+        } else if (phone.startsWith('62')) {
+            phone = '+' + phone;
+        } else {
+            phone = '+62' + phone;
+        }
+    }
+
+    return phone;
+};
 
 export const authService = {
     login: async (emailOrPhone, password) => {
@@ -30,22 +45,12 @@ export const authService = {
             // Jika input bukan email, cari berdasarkan nomor telepon
             if (!emailOrPhone.includes('@')) {
                 let cleanPhone = emailOrPhone.replace(/[^\d+]/g, '');
-
-                // Normalisasi nomor telepon
-                if (!cleanPhone.startsWith('+')) {
-                    if (cleanPhone.startsWith('0')) {
-                        cleanPhone = '+62' + cleanPhone.substring(1);
-                    } else if (cleanPhone.startsWith('62')) {
-                        cleanPhone = '+' + cleanPhone;
-                    } else {
-                        cleanPhone = '+62' + cleanPhone;
-                    }
-                }
+                const normalizedPhone = normalizePhoneNumber(cleanPhone);
 
                 // Cari user berdasarkan nomor telepon
                 const q = query(
                     collection(db, 'users'),
-                    where('phoneNumber', '==', cleanPhone)
+                    where('phoneNumber', '==', normalizedPhone)
                 );
                 const snapshot = await getDocs(q);
 
@@ -105,9 +110,10 @@ export const authService = {
 
             // Validasi nomor telepon sudah ada atau belum
             if (userData.phoneNumber) {
+                const normalizedPhone = normalizePhoneNumber(userData.phoneNumber);
                 const phoneQuery = query(
                     collection(db, 'users'),
-                    where('phoneNumber', '==', userData.phoneNumber)
+                    where('phoneNumber', '==', normalizedPhone)
                 );
                 const phoneSnapshot = await getDocs(phoneQuery);
                 if (!phoneSnapshot.empty) {
@@ -186,7 +192,7 @@ export const authService = {
                 uid,
                 name: formData.store_name,
                 email: formData.email,
-                phoneNumber: formData.phone_number || '',
+                phoneNumber: formData.phone_number ? normalizePhoneNumber(formData.phone_number) : '',
                 seller: true,
                 address: formData.address || null,
                 city: formData.city || null,
