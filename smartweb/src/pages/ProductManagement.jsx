@@ -14,6 +14,7 @@ const ProductManagement = ({ isSidebarOpen }) => {
     };
 
     const handleEditProduct = (productId) => {
+        console.log('inii product ididi,', productId)
         setSelectedProductId(productId);
         setCurrentView('edit');
     };
@@ -58,6 +59,7 @@ const ProductManagement = ({ isSidebarOpen }) => {
         );
     }
 
+    console.log('ini curet', currentView)
     // Default view adalah list
     return (
         <ProductsList

@@ -54,21 +54,6 @@ const ProductGrid = ({
         }
     };
 
-    const handleFavoriteClick = (productId) => {
-        if (isGuest) {
-            const shouldLogin = window.confirm(
-                'Anda perlu login untuk menambahkan ke favorit. Apakah Anda ingin login sekarang?'
-            );
-            if (shouldLogin) {
-                navigate('/login');
-            }
-        } else {
-            // Handle favorite for logged-in users
-            console.log(`Adding to favorites: ${productId}`);
-            // Add your favorite logic here
-        }
-    };
-
     const formatPrice = (price) => {
         return new Intl.NumberFormat('id-ID', {
             style: 'currency',
@@ -116,6 +101,11 @@ const ProductGrid = ({
             {products.map((product) => (
                 <div
                     key={product.id}
+                    onClick={() => {
+                        if (!isSeller) {
+                            navigate(`/product/${product.id}`);
+                        }
+                    }}
                     className="bg-white rounded-2xl shadow-sm hover:shadow-lg transition-all duration-300 border border-gray-100 overflow-hidden group"
                 >
                     {/* Product Image */}
@@ -127,7 +117,7 @@ const ProductGrid = ({
                         />
 
                         {/* Overlay Actions - Only for non-guests */}
-                        {!isGuest && (
+                        {/* {!isGuest && (
                             <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                                 <div className="flex flex-col space-y-2">
                                     <button
@@ -144,7 +134,7 @@ const ProductGrid = ({
                                     </button>
                                 </div>
                             </div>
-                        )}
+                        )} */}
 
                         {/* Guest View Badge */}
                         {isGuest && (

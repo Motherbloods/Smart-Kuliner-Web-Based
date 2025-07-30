@@ -11,6 +11,8 @@ import { ProtectedRoute } from "./components/ProtectedRoute";
 import { PublicRoute } from "./components/PublicRoute";
 import { AuthProvider } from "./context/AuthProvider";
 import { useAuth } from "./hooks/useAuth";
+import ProductDetail from "./pages/ProductDetail";
+import StoreDetail from "./pages/SellerDetail";
 
 const DashboardLayout = () => {
   const { userData, loading, isInitialized } = useAuth();
@@ -126,6 +128,19 @@ export function App() {
               </ProtectedRoute>
             }
           />
+
+          <Route
+            path="/product/:productId"
+            element={
+              <ProtectedRoute allowedRoles={['buyer', 'guest']}>
+                <ProductDetail />
+              </ProtectedRoute>
+            }
+          />
+
+          <Route path="/store/:storeId" element={<ProtectedRoute allowedRoles={['buyer', 'guest']}>
+            <StoreDetail />
+          </ProtectedRoute>} />
 
           {/* Main Dashboard Routes - Accessible by everyone (including guests) */}
           <Route

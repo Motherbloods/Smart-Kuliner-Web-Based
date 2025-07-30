@@ -86,10 +86,23 @@ function ProductsList({ isSidebarOpen, onAddProduct, onEditProduct, userId }) {
         ? "grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3"
         : "grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 xl:grid-cols-4";
 
+    useEffect(() => {
+        if (products.length > 0) {
+            const rawImage = products[0].image || products[0].imageUrls?.[0];
+            if (rawImage && rawImage.includes("cloudinary.com")) {
+                const link = document.createElement("link");
+                link.rel = "prefetch"; // <--- ganti ini
+                link.as = "image";
+                link.href = rawImage.replace("/upload/", "/upload/f_auto,q_auto,w_600/");
+                document.head.appendChild(link);
+            }
+        }
+    }, [products]);
+
     return (
         <div className="space-y-8 p-2 bg-gradient-to-br from-gray-50 to-blue-50 min-h-screen">
             <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                <div>
+                <div className="min-h-[80px]">
                     <h1 className="text-3xl font-bold text-gray-800 mb-2">
                         {userData?.seller ? 'Produk Anda' : 'Produk Terlaris'}
                     </h1>

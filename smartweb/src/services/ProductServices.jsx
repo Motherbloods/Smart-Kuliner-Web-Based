@@ -58,6 +58,7 @@ export const productService = {
 
     getProductById: async (productId) => {
         try {
+            console.log('Mengambil data Product dengan ID:', productId);
             const productRef = doc(db, 'products', productId);
             const snapshot = await getDoc(productRef);
 
@@ -131,6 +132,7 @@ export const productService = {
     // Service untuk mendapatkan data seller
     getSellerData: async (sellerId) => {
         try {
+            console.log('Mengambil data seller dengan ID:', sellerId);
             const sellerRef = doc(db, 'sellers', sellerId);
             const snapshot = await getDoc(sellerRef);
 
@@ -146,7 +148,24 @@ export const productService = {
             console.error('[ERROR] Gagal mengambil data seller:', error);
             throw new Error('Gagal mengambil data seller');
         }
+    },
+    getProductReviews: async (productId) => {
+        try {
+            const reviewsRef = collection(db, 'reviews');
+            const q = query(reviewsRef, where('productId', '==', productId));
+            const querySnapshot = await getDocs(q);
+
+            const reviews = querySnapshot.docs.map(doc => ({
+                id: doc.id,
+                ...doc.data()
+            }));
+
+            return reviews;
+        } catch (error) {
+            console.error('[ERROR] Gagal mengambil review produk:', error);
+            throw new Error('Gagal mengambil review produk');
+        }
     }
-};
+}
 
 export default productService;
